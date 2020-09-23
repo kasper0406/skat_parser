@@ -1,0 +1,25 @@
+{
+  "name": "eindkomst",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:kasper0406/eindkomst.git",
+  "author": "Kasper Nielsen <kasper0406@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server --open",
+    "watch": "webpack --watch"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@wasm-tool/wasm-pack-plugin": "1.3.1",
+    "html-webpack-plugin": "4.4.1",
+    "text-encoding": "0.7.0",
+    "webpack": "5.0.0-beta.30",
+    "webpack-cli": "3.3.12",
+    "webpack-dev-server": "3.11.0"
+  },
+  "browserslist": [
+    "last 1 Chrome version"
+  ]
+}
