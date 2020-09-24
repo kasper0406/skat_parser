@@ -15,11 +15,33 @@ use std::str;
 
 use crate::routes::EindkomstRoutes;
 
+#[derive(Clone, Debug)]
+enum FieldFormatter {
+    Raw,
+    Integer,
+    Date,
+    CprNumber,
+}
+
+impl FieldFormatter {
+    fn format(&self, raw_value: String) -> Result<String, ()> {
+        match self {
+            FieldFormatter::Integer => {
+                let parsed = raw_value.parse::<i64>();
+                parsed.map(|value| format!("{}", value)).map_err(|_| ())
+            },
+            _ => Ok(raw_value),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 struct RecordField {
     field_number: usize,
     start: usize,
     length: usize,
     name: String,
+    formatter: FieldFormatter,
 }
 
 impl RecordField {
@@ -28,15 +50,15 @@ impl RecordField {
             start, length,
             field_number: 999,
             name: "".to_string(),
+            formatter: FieldFormatter::Raw,
         }
     }
 }
 
 impl RecordField {
     fn parse(&self, line: &str) -> ParsedField {
-        ParsedField {
-            raw_value: line[(self.start - 1)..(self.start + self.length - 1)].to_string(),
-        }
+        let raw_value = line[(self.start - 1)..(self.start + self.length - 1)].to_string();
+        ParsedField::of(raw_value, self)
     }
 }
 
@@ -70,7 +92,7 @@ impl ParsedRecord {
 
     fn unknown(line: String) -> Self {
         ParsedRecord { fields: vec![
-            ParsedField::of(line),
+            ParsedField::unknown(&line),
         ] }
     }
 }
@@ -78,12 +100,22 @@ impl ParsedRecord {
 #[derive(Debug)]
 struct ParsedField {
     raw_value: String,
-//    field_spec: Option<Rc<RecordField>>,
+    field_spec: Option<RecordField>,
 }
 
 impl ParsedField {
-    fn of(raw_value: String) -> Self {
-        ParsedField { raw_value }
+    fn of(raw_value: String, field_spec: &RecordField) -> Self {
+        ParsedField {
+            raw_value: raw_value.to_string(),
+            field_spec: Some(field_spec.clone()),
+        }
+    }
+
+    fn unknown(raw_value: &str) -> Self {
+        ParsedField {
+            raw_value: raw_value.to_string(),
+            field_spec: None,
+        }
     }
 }
 
@@ -95,16 +127,26 @@ async fn parse_records(bytes: Vec<u8>, spec: RecordSpec, link: ComponentLink<Wel
     for line in lines {
         records.push(if let Some(record_type) = spec.get_record_type(line) {
             let mut fields = vec![];
+
+            let mut idx = 1;
+
             for field in &record_type.fields {
+                assert![ field.start <= idx, "Start must be smaller than index" ];
+                if field.start != idx {
+                    fields.push(ParsedField::unknown(&line[(idx - 1)..field.start]));
+                }
                 fields.push(field.parse(line));
+                idx = field.start + field.length;
             }
+            if line.len() != idx {
+                fields.push(ParsedField::unknown(&line[(idx - 1)..]));
+            }
+
             ParsedRecord::of(fields)
         } else {
             ParsedRecord::unknown(line.to_string())
         });
     }
-
-    console::log_1(&format!("Returning records: {:?}", records).into());
 
     link.send_message(Msg::RecordsParsed(records))
 }
@@ -191,12 +233,14 @@ impl Component for Welcome {
                                     start: 1,
                                     length: 7,
                                     name: "Line nr.".to_string(),
+                                    formatter: FieldFormatter::Integer,
                                 },
                                 RecordField {
                                     field_number: 0,
                                     start: 8,
                                     length: 4,
                                     name: "Record nr.".to_string(),
+                                    formatter: FieldFormatter::Raw,
                                 },
                             ]
                         }
@@ -216,7 +260,13 @@ impl Component for Welcome {
     fn view(&self) -> Html {
         let renderField = |field: &ParsedField| { html! {
             <div>
-                { field.raw_value.clone() }
+                <p> { field.field_spec.as_ref().map(|spec| spec.name.clone()).unwrap_or("Unknown".to_string()) } </p>
+                { field.field_spec.as_ref().map(|spec|
+                    match spec.formatter.format(field.raw_value.clone()) {
+                        Ok(parsed) => parsed,
+                        _ => "PARSE_ERROR".to_string()
+                    })
+                    .unwrap_or(field.raw_value.clone()) }
             </div>
         } };
 
