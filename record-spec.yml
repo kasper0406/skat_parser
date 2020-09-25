@@ -105,17 +105,25 @@ records:
         start: 85
         length: 1
         name: "Skattekorttype"
-        formatter: Enum
+        formatter:
+          Enum:
+            1: Hovedkort
+            2: Bikort
+            6: Hovedkort med separat A-skat-procent 
+            7: Bikort med separat A-skat-procent 
       - field_number: 13
         start: 86
         length: 8
         name: "Skattekort anvend fra"
-        formatter: Raw
+        formatter: Date
       - field_number: 15
         start: 144
         length: 1
         name: "Genrekvivering skattekort"
-        formatter: Enum
+        formatter:
+          Enum:
+            ' ': Nej
+            R: Genrekvirering
   - key: 2111
     fields:
       - field_number: 1

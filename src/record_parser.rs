@@ -4,6 +4,8 @@ use web_sys::console;
 use yew::Html;
 use yew::prelude::*;
 
+use std::collections::HashMap;
+
 #[derive(Clone, Debug, Deserialize)]
 pub enum FieldFormatter {
     Raw,
@@ -11,7 +13,7 @@ pub enum FieldFormatter {
     Date,
     CprNumber,
     Time,
-    Enum,
+    Enum(HashMap<String, String>),
 }
 
 impl FieldFormatter {
@@ -26,18 +28,21 @@ impl FieldFormatter {
                     return Err(());
                 }
                 Ok(html! { format!("{}-{}-{}", &raw_value[6..8], &raw_value[4..6], &raw_value[0..4]) })
-            }
+            },
             FieldFormatter::Time => {
                 if raw_value.len() != 6 {
                     return Err(());
                 }
                 Ok(html! { format!("{}:{}:{}", &raw_value[0..2], &raw_value[2..4], &raw_value[4..6]) })
-            }
+            },
             FieldFormatter::CprNumber => {
                 if raw_value.len() != 10 {
                     return Err(());
                 }
                 Ok(html! { format!("{}-{}", &raw_value[0..6], &raw_value[6..10]) })
+            },
+            FieldFormatter::Enum(entries) => {
+                Ok(html! { entries.get(&raw_value).unwrap_or(&format!("Unknown: {}", raw_value)) })
             }
             _ => Ok(html! { raw_value }),
         }
