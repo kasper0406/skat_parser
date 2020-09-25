@@ -7,13 +7,156 @@ key_field:
 records:
   - key: 1000
     fields:
-      - field_number: 0
+      - field_number: 1
         start: 1
         length: 7
         name: "Line nr."
         formatter: Integer
-      - field_number: 1
+      - field_number: 2
         start: 8
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 8
+        name: "Dato sendt"
+        formatter: Date
+      - field_number: 4
+        start: 20
+        length: 6
+        name: "Klok sendt"
+        formatter: Time
+      - field_number: 5
+        start: 26
+        length: 8
+        name: "Indberetter SE-nummer"
+        formatter: Raw
+      - field_number: 6
+        start: 34
+        length: 8
+        name: "Indberetter CVR-nummer"
+        formatter: Raw
+      - field_number: 7
+        start: 42
+        length: 2
+        name: "Indberetter type"
+        formatter: Raw
+      - field_number: 10
+        start: 50
+        length: 20
+        name: "Edb system"
+        formatter: Raw
+      - field_number: 11
+        start: 70
+        length: 20
+        name: "Edb version"
+        formatter: Raw
+      - field_number: 12
+        start: 90
+        length: 16
+        name: "Hovedindberetnings ID"
+        formatter: Raw
+  - key: 2001
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+      - field_number: 4
+        start: 28
+        length: 8
+        name: "Virksomhed SE nr."
+        formatter: Raw
+  - key: 2101
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 10
+        name: "Person CPR nummer"
+        formatter: CprNumber
+      - field_number: 6
+        start: 45
+        length: 8
+        name: "Person ansættelsesdato"
+        formatter: Date
+      - field_number: 7
+        start: 53
+        length: 8
+        name: "Person fratrædelsesdato"
+        formatter: Date
+      - field_number: 12
+        start: 85
+        length: 1
+        name: "Skattekorttype"
+        formatter: Enum
+      - field_number: 13
+        start: 86
+        length: 8
+        name: "Skattekort anvend fra"
+        formatter: Raw
+      - field_number: 15
+        start: 144
+        length: 1
+        name: "Genrekvivering skattekort"
+        formatter: Enum
+  - key: 2111
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 4
+        name: "Indholdstype"
+        formatter: Raw
+      - field_number: 4
+        start: 16
+        length: 12
+        name: "Medarbejderkode"
+        formatter: Raw
+      - field_number: 5
+        start: 28
+        length: 8
+        name: "Ikraftrædelsestidspunkt"
+        formatter: Date
+  - key: 9999
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 7
+        name: "Antal records"
+        formatter: Integer

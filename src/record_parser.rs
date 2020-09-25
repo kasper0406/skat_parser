@@ -1,11 +1,15 @@
 use serde::Deserialize;
 
+use web_sys::console;
+
 #[derive(Clone, Debug, Deserialize)]
 pub enum FieldFormatter {
     Raw,
     Integer,
     Date,
     CprNumber,
+    Time,
+    Enum,
 }
 
 impl FieldFormatter {
@@ -136,7 +140,8 @@ pub fn parse_records(content: &str, spec: RecordSpec) -> Vec<ParsedRecord> {
             let mut idx = 1;
 
             for field in &record_type.fields {
-                assert![ field.start <= idx, "Start must be smaller than index" ];
+                // console::log_1(&format!("Idx: {}, Start: {}, field: {}, record: {}", idx, field.start, field.field_number, record_type.key).into());
+                assert![ field.start >= idx, "Start must be smaller than index" ];
                 if field.start != idx {
                     fields.push(ParsedField::unknown(&line[(idx - 1)..field.start]));
                 }
