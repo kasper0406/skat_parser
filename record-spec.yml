@@ -1,0 +1,19 @@
+key_field:
+  field_number: 9999
+  start: 8
+  length: 4
+  name: "[KEYFIELD]"
+  formatter: Raw
+records:
+  - key: 1000
+    fields:
+      - field_number: 0
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 1
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw

@@ -1,7 +1,15 @@
+import css from './style.css';
+import recordspec from './record-spec.yml';
+
 const rust = import("./pkg");
 
-rust.then(rust => {
-    console.log("Initializing rust code");
+console.log("Record spec: ", recordspec);
 
-    rust.run();
-});
+fetch(recordspec)
+    .then(response => response.text())
+    .then(recordSpecString => {
+        rust.then(rust => {
+            console.log("Initializing rust code");
+            rust.run(recordSpecString);
+        });
+    });

@@ -26,5 +26,17 @@ module.exports = {
     mode: 'development',
     experiments: {
         syncWebAssembly: true
+    },
+    module: {
+        rules: [
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /record-spec\.yml/i,
+                use: ['file-loader']
+            }
+        ]
     }
 };

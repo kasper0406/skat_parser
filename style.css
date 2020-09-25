@@ -1,0 +1,28 @@
+:root {
+  --font-stack: Helvetica, sans-serif;
+}
+
+body {
+  font: 100% var(--font-stack);
+}
+
+.record {
+  display: flex;
+  border: 1px solid grey;
+  padding: 10px;
+  margin: 10px;
+}
+
+.record .field {
+  font-size: 11pt;
+  margin-right: 30px;
+}
+
+.record .field > p {
+  font-weight: bold;
+  margin: 0px;
+  font-size: 9pt;
+  border-bottom: 1px solid grey;
+  color: grey;
+}
+
