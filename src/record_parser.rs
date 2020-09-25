@@ -1,6 +1,8 @@
 use serde::Deserialize;
 
 use web_sys::console;
+use yew::Html;
+use yew::prelude::*;
 
 #[derive(Clone, Debug, Deserialize)]
 pub enum FieldFormatter {
@@ -13,13 +15,31 @@ pub enum FieldFormatter {
 }
 
 impl FieldFormatter {
-    pub fn format(&self, raw_value: String) -> Result<String, ()> {
+    pub fn format(&self, raw_value: String) -> Result<Html, ()> {
         match self {
             FieldFormatter::Integer => {
                 let parsed = raw_value.parse::<i64>();
-                parsed.map(|value| format!("{}", value)).map_err(|_| ())
+                parsed.map(|value| html! { format!("{}", value) }).map_err(|_| ())
             },
-            _ => Ok(raw_value),
+            FieldFormatter::Date => {
+                if raw_value.len() != 8 {
+                    return Err(());
+                }
+                Ok(html! { format!("{}-{}-{}", &raw_value[6..8], &raw_value[4..6], &raw_value[0..4]) })
+            }
+            FieldFormatter::Time => {
+                if raw_value.len() != 6 {
+                    return Err(());
+                }
+                Ok(html! { format!("{}:{}:{}", &raw_value[0..2], &raw_value[2..4], &raw_value[4..6]) })
+            }
+            FieldFormatter::CprNumber => {
+                if raw_value.len() != 10 {
+                    return Err(());
+                }
+                Ok(html! { format!("{}-{}", &raw_value[0..6], &raw_value[6..10]) })
+            }
+            _ => Ok(html! { raw_value }),
         }
     }
 }
