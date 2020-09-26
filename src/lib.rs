@@ -14,13 +14,15 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 mod routes;
-mod app;
 mod welcome;
 mod record_parser;
+mod record_component;
 
 use routes::EindkomstRoutes;
 
 use record_parser::RecordSpec;
+
+use std::rc::Rc;
 
 #[derive(Clone, Properties)]
 pub struct RouterProps {
@@ -50,25 +52,7 @@ impl Component for EindkomstRouter {
     }
 
     fn view(&self) -> Html {
-        /*
-        html! {
-            <div style="-webkit-user-select: none; cursor: default;">
-                <Router<EindkomstRoutes>
-                    render = Router::render(move |switch: EindkomstRoutes| {
-                        match switch {
-                            EindkomstRoutes::Welcome => html!{ <welcome::Welcome recordspec={recordspec} /> },
-                            EindkomstRoutes::Eindkomst => html!{ <app::App /> }
-                        }
-                    })
-                    redirect = Router::redirect(|route: Route| {
-                        EindkomstRoutes::Welcome
-                    })
-                />
-            </div>
-        }
-        */
-
-        html!{ <welcome::Welcome recordspec={self.props.recordspec.clone()} /> }
+        html!{ <welcome::Welcome recordspec={Rc::new(self.props.recordspec.clone())} /> }
     }
 }
 

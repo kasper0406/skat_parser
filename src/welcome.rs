@@ -12,21 +12,23 @@ use wasm_bindgen_futures::JsFuture;
 use wasm_bindgen_futures::spawn_local;
 
 use std::str;
+use std::rc::Rc;
 
 use crate::record_parser::*;
+use crate::record_component::*;
 
 use crate::routes::EindkomstRoutes;
 
 #[derive(Clone, Properties)]
 pub struct WelcomeProps {
-    pub recordspec: RecordSpec,
+    pub recordspec: Rc<RecordSpec>,
 }
 
 pub struct Welcome {
     link: ComponentLink<Self>,
     props: WelcomeProps,
     
-    records: Option<Vec<ParsedRecord>>,
+    records: Option<Rc<Vec<RecordHierarchy>>>,
     // Error with file load to be displayed to the user
     error: Option<String>,
 }
@@ -36,7 +38,7 @@ pub enum Msg {
     FileDropped(DragEvent),
     FileLoaded(Vec<u8>),
 
-    RecordsParsed(Vec<ParsedRecord>),
+    RecordsParsed(Rc<Vec<RecordHierarchy>>),
 }
 
 async fn load_bytes_from_stream(link: ComponentLink<Welcome>, js_stream: ws::ReadableStream) {
@@ -53,11 +55,13 @@ async fn load_bytes_from_stream(link: ComponentLink<Welcome>, js_stream: ws::Rea
     link.send_message(Msg::FileLoaded(buffer));
 }
 
-async fn async_parse_records(bytes: Vec<u8>, spec: RecordSpec, link: ComponentLink<Welcome>) {
+async fn async_parse_records(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: ComponentLink<Welcome>) {
     let content = std::str::from_utf8(&bytes).unwrap();
 
-    let records = parse_records(&content, spec);
-    link.send_message(Msg::RecordsParsed(records))
+    let records = parse_records(&content, &spec);
+    let records_with_hierarchy = build_hierarchy(&records, &spec);
+
+    link.send_message(Msg::RecordsParsed(Rc::new(records_with_hierarchy)))
 }
 
 impl Component for Welcome {
@@ -113,34 +117,6 @@ impl Component for Welcome {
     }
 
     fn view(&self) -> Html {
-        let renderField = |field: &ParsedField| {
-            // TODO(knielsen): Have a checkbox to determine if unknown fields should be shown or not
-            if field.spec().is_some() {
-                html! {
-                    <div class="field">
-                        <p> { field.spec().as_ref().map(|spec| spec.name().clone()).unwrap_or("Unknown".to_string()) } </p>
-                        { field.spec().as_ref()
-                            .map(|spec| spec.formatter().format(field.raw().clone()).unwrap_or(html! { field.raw() }))
-                            .unwrap_or(html! { field.raw() }) }
-                    </div>
-                }
-            } else {
-                html! {}
-            }
-        };
-
-        let renderRecord = |record: &ParsedRecord| { html! {
-            <div class="record">
-                { for record.fields().iter().map(renderField) }
-            </div>
-        } };
-
-        let recordsView = if let Some(records) = &self.records {
-            html! { for records.iter().map(renderRecord) }
-        } else {
-            html!{ { "Upload a file to show records" } }
-        };
-
         html! {
             <>
                 <h1>{ "eIndkomst viewer"}</h1>
@@ -156,9 +132,16 @@ impl Component for Welcome {
                    { "Drop your main file here" }
                 </p>
 
-                <div>
-                    { recordsView }
-                </div>
+                { if let Some(records) = &self.records {
+                    html! {
+                    <div>
+                        <RecordComponent recordspec={self.props.recordspec.clone()}
+                                         records={records.clone()} />
+                    </div>
+                    }
+                } else {
+                    html! {}
+                } }
             </>
         }
     }

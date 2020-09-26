@@ -4,6 +4,13 @@ key_field:
   length: 4
   name: "[KEYFIELD]"
   formatter: Raw
+hierarchy:
+  - key: 1000
+  - key: 2001
+    children:
+      - key: 2101
+      - key: 2111
+  - key: 9999
 records:
   - key: 1000
     fields:

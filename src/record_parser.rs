@@ -5,6 +5,7 @@ use yew::Html;
 use yew::prelude::*;
 
 use std::collections::HashMap;
+use std::rc::Rc;
 
 #[derive(Clone, Debug, Deserialize)]
 pub enum FieldFormatter {
@@ -94,6 +95,7 @@ pub struct RecordType {
 pub struct RecordSpec {
     key_field: RecordField,
     records: Vec<RecordType>,
+    hierarchy: Vec<HierarchySpec>,
 }
 
 impl RecordSpec {
@@ -103,29 +105,37 @@ impl RecordSpec {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ParsedRecord {
 //    title: String,
+    key: String,
     fields: Vec<ParsedField>,
 }
 
 impl ParsedRecord {
-    pub fn of(fields: Vec<ParsedField>) -> Self {
-        ParsedRecord { fields }
+    pub fn of(key: String, fields: Vec<ParsedField>) -> Self {
+        ParsedRecord { key, fields }
     }
 
     pub fn unknown(line: String) -> Self {
-        ParsedRecord { fields: vec![
-            ParsedField::unknown(&line),
-        ] }
+        ParsedRecord {
+            key: "UNKNOWN".to_string(),
+            fields: vec![
+                ParsedField::unknown(&line),
+            ]
+        }
     }
 
     pub fn fields(&self) -> &[ParsedField] {
         &self.fields
     }
+
+    pub fn key(&self) -> &str {
+        &self.key
+    }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct ParsedField {
     raw_value: String,
     field_spec: Option<RecordField>,
@@ -155,7 +165,7 @@ impl ParsedField {
     }
 }
 
-pub fn parse_records(content: &str, spec: RecordSpec) -> Vec<ParsedRecord> {
+pub fn parse_records(content: &str, spec: &RecordSpec) -> Vec<ParsedRecord> {
     let mut records = vec![];
 
     for line in content.lines() {
@@ -177,11 +187,91 @@ pub fn parse_records(content: &str, spec: RecordSpec) -> Vec<ParsedRecord> {
                 fields.push(ParsedField::unknown(&line[(idx - 1)..]));
             }
 
-            ParsedRecord::of(fields)
+            ParsedRecord::of(spec.key_field.parse(line).raw_value, fields)
         } else {
             ParsedRecord::unknown(line.to_string())
         });
     }
 
     records
+}
+
+pub struct RecordHierarchy {
+    record: ParsedRecord,
+    children: Rc<Vec<RecordHierarchy>>,
+}
+
+impl RecordHierarchy {
+    pub fn of(record: ParsedRecord) -> RecordHierarchy {
+        RecordHierarchy {
+            record,
+            children: vec![],
+        }
+    }
+
+    pub fn record(&self) -> &ParsedRecord {
+        &self.record
+    }
+
+    pub fn children(&self) -> &Vec<RecordHierarchy> {
+        &self.children
+    }
+}
+
+#[derive(Clone, Deserialize)]
+pub struct HierarchySpec {
+    key: String,
+    children: Option<Vec<HierarchySpec>>,
+}
+
+pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Vec<RecordHierarchy> {
+    let mut result = vec![];
+
+    let empty_list = vec![];
+
+    // TODO(knielsen): Consider unifying these two stacks
+    let mut hierarchy_stack: Vec<RecordHierarchy> = vec![ ];
+    let mut spec_stack: Vec<&Vec<HierarchySpec>> = vec![ &record_spec.hierarchy ];
+
+
+    for record in records {
+        assert! [ hierarchy_stack.len() + 1 == spec_stack.len(), "Stack should be the same size!" ];
+        while !spec_stack.is_empty() {
+            if let Some(matching_spec) = spec_stack.last().unwrap()
+                    .iter()
+                    .find(|spec| spec.key == record.key())
+            {
+                spec_stack.push(matching_spec.children.as_ref().unwrap_or(&empty_list));
+                hierarchy_stack.push(RecordHierarchy::of(record.clone()));
+                break;
+            } else {
+                if spec_stack.len() > 1 {
+                    spec_stack.pop();
+                    let element = hierarchy_stack.pop().unwrap();
+                    if let Some(current_node) = hierarchy_stack.last_mut() {
+                        current_node.children.push(element);
+                    } else {
+                        result.push(element);
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if hierarchy_stack.is_empty() {
+            result.push(RecordHierarchy::of(record.clone()));
+        }
+    }
+
+    // Make sure to transfer ownership to the resulting structure in case things are still being built
+    while let Some(element) = hierarchy_stack.pop() {
+        if let Some(current_node) = hierarchy_stack.last_mut() {
+            current_node.children.push(element);
+        } else {
+            result.push(element);
+        }
+    }
+
+    result
 }
