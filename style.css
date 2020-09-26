@@ -4,25 +4,54 @@
 
 body {
   font: 100% var(--font-stack);
+  background-color: #fffaff;
 }
 
 .record {
-  display: flex;
-  border: 1px solid grey;
-  padding: 10px;
-  margin: 10px;
+  margin-bottom: 10pt;
+  margin-left: 10pt;
+  margin-top: 5pt;
 }
 
-.record .field {
-  font-size: 11pt;
-  margin-right: 30px;
-}
-
-.record .field > p {
+.record > .title {
+  color: #6b5b95;
   font-weight: bold;
-  margin: 0px;
+  font-size: 14pt;
+}
+
+.record .record > .title {
+  color: #feb236;
+  font-size: 12pt;
+}
+
+.record .record .record > .title {
+  color: #d64161;
+  font-size: 10pt;
+}
+
+.record .record .record .record > .title {
+  color: #ff7b25;
+  font-size: 10pt;
+}
+
+.record > .fields {
+  display: flex;
+  padding-left: 15pt;
+  padding-top: 5pt;
+}
+
+.record > .fields > .field {
+  font-size: 11pt;
+  margin-right: 30pt;
+}
+
+.record .field > .name {
+  font-weight: bold;
+  margin: 0pt;
   font-size: 9pt;
-  border-bottom: 1px solid grey;
   color: grey;
 }
 
+.record .field > .value {
+  margin: 3pt 2pt 3pt 0pt;
+}

@@ -4,8 +4,17 @@ key_field:
   length: 4
   name: "[KEYFIELD]"
   formatter: Raw
-records:
+hierarchy:
   - key: 1000
+  - key: 2001
+    children:
+      - key: 2101
+        children:
+          - key: 2111
+  - key: 9999
+records:
+  - name: Indberetter
+    key: 1000
     fields:
       - field_number: 1
         start: 1
@@ -57,7 +66,8 @@ records:
         length: 16
         name: "Hovedindberetnings ID"
         formatter: Raw
-  - key: 2001
+  - name: Virksomhed
+    key: 2001
     fields:
       - field_number: 1
         start: 1
@@ -74,7 +84,8 @@ records:
         length: 8
         name: "Virksomhed SE nr."
         formatter: Raw
-  - key: 2101
+  - name: Faste medarbejdsoplysninger
+    key: 2101
     fields:
       - field_number: 1
         start: 1
@@ -124,7 +135,8 @@ records:
           Enum:
             ' ': Nej
             R: Genrekvirering
-  - key: 2111
+  - name: Faste medarbejdsoplysninger til DST
+    key: 2111
     fields:
       - field_number: 1
         start: 1
@@ -151,7 +163,8 @@ records:
         length: 8
         name: "Ikraftrædelsestidspunkt"
         formatter: Date
-  - key: 9999
+  - name: Slutrecord
+    key: 9999
     fields:
       - field_number: 1
         start: 1
