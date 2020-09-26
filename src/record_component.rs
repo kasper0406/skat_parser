@@ -47,10 +47,14 @@ impl Component for RecordComponent {
             if field.spec().is_some() {
                 html! {
                     <div class="field">
-                        <p> { field.spec().as_ref().map(|spec| spec.name().clone()).unwrap_or("Unknown".to_string()) } </p>
-                        { field.spec().as_ref()
-                            .map(|spec| spec.formatter().format(field.raw().clone()).unwrap_or(html! { field.raw() }))
-                            .unwrap_or(html! { field.raw() }) }
+                        <p class="name">
+                            { field.spec().as_ref().map(|spec| spec.name().clone()).unwrap_or("Unknown".to_string()) }
+                        </p>
+                        <p class="value">
+                            { field.spec().as_ref()
+                                .map(|spec| spec.formatter().format(field.raw().clone()).unwrap_or(html! { field.raw() }))
+                                .unwrap_or(html! { field.raw() }) }
+                        </p>
                     </div>
                 }
             } else {
@@ -60,10 +64,18 @@ impl Component for RecordComponent {
 
         let renderRecord = |record: &RecordHierarchy| { html! {
             <div class="record">
-                { for record.record().fields().iter().map(renderField) }
+                { if let Some(spec) = record.record().spec() {
+                    html! { <div class="title"> { spec.name() } </div> }
+                } else {
+                    html! { }
+                } }
+               
+                <div class="fields">
+                    { for record.record().fields().iter().map(renderField) }
+                </div>
                 
                 <RecordComponent recordspec={self.props.recordspec.clone()}
-                                             records={record.children().clone()} />
+                                             records={record.children()} />
             </div>
         } };
 

@@ -85,13 +85,20 @@ impl RecordField {
     }
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct RecordType {
+    name: String,
     key: String,
     fields: Vec<RecordField>,
 }
 
-#[derive(Clone, Deserialize)]
+impl RecordType {
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+}
+
+#[derive(Clone, Deserialize, Debug)]
 pub struct RecordSpec {
     key_field: RecordField,
     records: Vec<RecordType>,
@@ -110,11 +117,16 @@ pub struct ParsedRecord {
 //    title: String,
     key: String,
     fields: Vec<ParsedField>,
+    spec: Option<Rc<RecordType>>,
 }
 
 impl ParsedRecord {
-    pub fn of(key: String, fields: Vec<ParsedField>) -> Self {
-        ParsedRecord { key, fields }
+    pub fn of(spec: Rc<RecordType>, key: String, fields: Vec<ParsedField>) -> Self {
+        ParsedRecord {
+            key,
+            fields,
+            spec: Some(spec),
+        }
     }
 
     pub fn unknown(line: String) -> Self {
@@ -122,7 +134,8 @@ impl ParsedRecord {
             key: "UNKNOWN".to_string(),
             fields: vec![
                 ParsedField::unknown(&line),
-            ]
+            ],
+            spec: None,
         }
     }
 
@@ -132,6 +145,10 @@ impl ParsedRecord {
 
     pub fn key(&self) -> &str {
         &self.key
+    }
+
+    pub fn spec(&self) -> Option<Rc<RecordType>> {
+        self.spec.as_ref().map(|spec| spec.clone())
     }
 }
 
@@ -165,7 +182,7 @@ impl ParsedField {
     }
 }
 
-pub fn parse_records(content: &str, spec: &RecordSpec) -> Vec<ParsedRecord> {
+pub fn parse_records(content: &str, spec: Rc<RecordSpec>) -> Vec<ParsedRecord> {
     let mut records = vec![];
 
     for line in content.lines() {
@@ -187,7 +204,7 @@ pub fn parse_records(content: &str, spec: &RecordSpec) -> Vec<ParsedRecord> {
                 fields.push(ParsedField::unknown(&line[(idx - 1)..]));
             }
 
-            ParsedRecord::of(spec.key_field.parse(line).raw_value, fields)
+            ParsedRecord::of(Rc::new(record_type.clone()), spec.key_field.parse(line).raw_value, fields)
         } else {
             ParsedRecord::unknown(line.to_string())
         });
@@ -205,7 +222,7 @@ impl RecordHierarchy {
     pub fn of(record: ParsedRecord) -> RecordHierarchy {
         RecordHierarchy {
             record,
-            children: vec![],
+            children: Rc::new(vec![]),
         }
     }
 
@@ -213,12 +230,12 @@ impl RecordHierarchy {
         &self.record
     }
 
-    pub fn children(&self) -> &Vec<RecordHierarchy> {
-        &self.children
+    pub fn children(&self) -> Rc<Vec<RecordHierarchy>> {
+        self.children.clone()
     }
 }
 
-#[derive(Clone, Deserialize)]
+#[derive(Clone, Deserialize, Debug)]
 pub struct HierarchySpec {
     key: String,
     children: Option<Vec<HierarchySpec>>,
@@ -232,7 +249,6 @@ pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Ve
     // TODO(knielsen): Consider unifying these two stacks
     let mut hierarchy_stack: Vec<RecordHierarchy> = vec![ ];
     let mut spec_stack: Vec<&Vec<HierarchySpec>> = vec![ &record_spec.hierarchy ];
-
 
     for record in records {
         assert! [ hierarchy_stack.len() + 1 == spec_stack.len(), "Stack should be the same size!" ];
@@ -249,7 +265,7 @@ pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Ve
                     spec_stack.pop();
                     let element = hierarchy_stack.pop().unwrap();
                     if let Some(current_node) = hierarchy_stack.last_mut() {
-                        current_node.children.push(element);
+                        Rc::get_mut(&mut current_node.children).unwrap().push(element);
                     } else {
                         result.push(element);
                     }
@@ -267,7 +283,7 @@ pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Ve
     // Make sure to transfer ownership to the resulting structure in case things are still being built
     while let Some(element) = hierarchy_stack.pop() {
         if let Some(current_node) = hierarchy_stack.last_mut() {
-            current_node.children.push(element);
+            Rc::get_mut(&mut current_node.children).unwrap().push(element);
         } else {
             result.push(element);
         }

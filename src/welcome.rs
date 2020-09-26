@@ -58,7 +58,7 @@ async fn load_bytes_from_stream(link: ComponentLink<Welcome>, js_stream: ws::Rea
 async fn async_parse_records(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: ComponentLink<Welcome>) {
     let content = std::str::from_utf8(&bytes).unwrap();
 
-    let records = parse_records(&content, &spec);
+    let records = parse_records(&content, spec.clone());
     let records_with_hierarchy = build_hierarchy(&records, &spec);
 
     link.send_message(Msg::RecordsParsed(Rc::new(records_with_hierarchy)))
