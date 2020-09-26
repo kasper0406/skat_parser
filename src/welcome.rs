@@ -119,7 +119,7 @@ impl Component for Welcome {
     fn view(&self) -> Html {
         html! {
             <>
-                <h1>{ "eIndkomst viewer"}</h1>
+                <h1>{ "eIndkomst viser"}</h1>
                 {
                     if let Some(error) = &self.error {
                         html! { <p> { error } </p> }
@@ -127,10 +127,11 @@ impl Component for Welcome {
                         html! { }
                     }
                 }
-                <p ondragover=self.link.callback(|event| Msg::DragOver(event))
-                   ondrop=self.link.callback(|event| Msg::FileDropped(event))>
-                   { "Drop your main file here" }
-                </p>
+                <div ondragover=self.link.callback(|event| Msg::DragOver(event))
+                     ondrop=self.link.callback(|event| Msg::FileDropped(event))
+                     class="dropzone">
+                   { "Drop eIndkomst filen her" }
+                </div>
 
                 { if let Some(records) = &self.records {
                     html! {

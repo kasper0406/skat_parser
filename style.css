@@ -7,6 +7,27 @@ body {
   background-color: #fffaff;
 }
 
+h1 {
+  text-align: center;
+  color: grey;
+  font-size: 32pt;
+}
+
+div.dropzone {
+  border: 3px dashed darkorange;
+  text-align: center;
+  padding-top: 20pt;
+  padding-bottom: 20pt;
+  font-weight: bold;
+  font-size: 14pt;
+  color: burlywood;
+  margin: 20pt 40pt 20pt 40pt;
+}
+
+div.dropzone :drop {
+  background-color: blue;
+}
+
 .record {
   margin-bottom: 10pt;
   margin-left: 10pt;

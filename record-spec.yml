@@ -50,7 +50,10 @@ records:
         start: 42
         length: 2
         name: "Indberetter type"
-        formatter: Raw
+        formatter:
+          Enum:
+            01: Virksomhed
+            02: Befuldmægtiget/LSB
       - field_number: 10
         start: 50
         length: 20
