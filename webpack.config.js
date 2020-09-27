@@ -34,7 +34,7 @@ module.exports = {
                 use: ['style-loader', 'css-loader'],
             },
             {
-                test: /record-spec\.yml/i,
+                test: /(.*)-spec\.yml/i,
                 use: ['file-loader']
             }
         ]

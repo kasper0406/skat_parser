@@ -28,6 +28,7 @@ use std::rc::Rc;
 #[derive(Clone, Properties)]
 pub struct RouterProps {
     recordspec: RecordSpec,
+    errorspec: RecordSpec,
 }
 
 pub struct EindkomstRouter {
@@ -53,14 +54,17 @@ impl Component for EindkomstRouter {
     }
 
     fn view(&self) -> Html {
-        html!{ <welcome::Welcome recordspec={Rc::new(self.props.recordspec.clone())} /> }
+        html!{ <welcome::Welcome
+                    recordspec={Rc::new(self.props.recordspec.clone())}
+                    errorspec={Rc::new(self.props.errorspec.clone())} /> }
     }
 }
 
 #[wasm_bindgen]
-pub fn run(record_spec_yml: &str) {
+pub fn run(record_spec_yml: &str, error_spec_yml: &str) {
     set_panic_hook();
 
     let recordspec: RecordSpec = serde_yaml::from_str(record_spec_yml).unwrap();
-    yew::start_app_with_props::<EindkomstRouter>(RouterProps { recordspec });
+    let errorspec: RecordSpec = serde_yaml::from_str(error_spec_yml).unwrap();
+    yew::start_app_with_props::<EindkomstRouter>(RouterProps { recordspec, errorspec });
 }

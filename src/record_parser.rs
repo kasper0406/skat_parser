@@ -76,6 +76,10 @@ impl RecordField {
     pub fn formatter(&self) -> &FieldFormatter {
         &self.formatter
     }
+
+    pub fn field_number(&self) -> usize {
+        self.field_number
+    }
 }
 
 impl RecordField {
@@ -149,6 +153,13 @@ impl ParsedRecord {
 
     pub fn spec(&self) -> Option<Rc<RecordType>> {
         self.spec.as_ref().map(|spec| spec.clone())
+    }
+
+    pub fn field(&self, fieldnr: usize) -> Option<String> {
+        self.fields.iter()
+            .filter(|field| field.field_spec.is_some())
+            .find(|field| field.field_spec.as_ref().unwrap().field_number == fieldnr)
+            .map(|field| field.raw_value.clone())
     }
 }
 
@@ -286,6 +297,51 @@ pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Ve
             Rc::get_mut(&mut current_node.children).unwrap().push(element);
         } else {
             result.push(element);
+        }
+    }
+
+    result
+}
+
+#[derive(Debug)]
+pub enum ErrorType {
+    Warning,
+    Error,
+}
+
+#[derive(Debug)]
+pub struct Error {
+    pub severity: ErrorType,
+    pub line: usize,
+    pub field: usize,
+    pub error_id: String,
+    pub error_text: String,
+}
+
+pub fn extract_errors(records: &[ParsedRecord]) -> HashMap<usize, Error> {
+    let mut result = HashMap::new();
+
+    let extract = |severity, record: &ParsedRecord| {
+        Error {
+            severity,
+            line: record.field(2).unwrap().parse::<usize>().unwrap(),
+            field: record.field(3).unwrap().parse::<usize>().unwrap(),
+            error_id: record.field(6).unwrap(),
+            error_text: record.field(7).unwrap(),
+        }
+    };
+
+    for record in records {
+        match record.key.as_str() {
+            "0002" => {
+                let error = extract(ErrorType::Error, record);
+                result.insert(error.line, error);
+            },
+            "0003" => {
+                let error = extract(ErrorType::Warning, record);
+                result.insert(error.line, error);
+            },
+            _ => {},
         }
     }
 

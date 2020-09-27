@@ -14,6 +14,8 @@ use wasm_bindgen_futures::spawn_local;
 use std::str;
 use std::rc::Rc;
 
+use std::collections::HashMap;
+
 use crate::record_parser::*;
 use crate::record_component::*;
 use crate::file_drop_component::*;
@@ -21,6 +23,7 @@ use crate::file_drop_component::*;
 #[derive(Clone, Properties)]
 pub struct WelcomeProps {
     pub recordspec: Rc<RecordSpec>,
+    pub errorspec: Rc<RecordSpec>,
 }
 
 pub struct Welcome {
@@ -28,11 +31,15 @@ pub struct Welcome {
     props: WelcomeProps,
     
     records: Option<Rc<Vec<RecordHierarchy>>>,
+    errors: Option<Rc<HashMap<usize, Error>>>,
 }
 
 pub enum Msg {
-    FileLoaded(Vec<u8>),
+    RecordFileLoaded(Vec<u8>),
     RecordsParsed(Rc<Vec<RecordHierarchy>>),
+
+    ErrorFileLoaded(Vec<u8>),
+    UpdateErrors(Rc<HashMap<usize, Error>>),
 }
 
 async fn async_parse_records(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: ComponentLink<Welcome>) {
@@ -44,6 +51,13 @@ async fn async_parse_records(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: Compone
     link.send_message(Msg::RecordsParsed(Rc::new(records_with_hierarchy)))
 }
 
+async fn async_process_errors(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: ComponentLink<Welcome>) {
+    let content = std::str::from_utf8(&bytes).unwrap();
+    let records = parse_records(&content, spec.clone());
+
+    link.send_message(Msg::UpdateErrors(Rc::new(extract_errors(&records))))
+}
+
 impl Component for Welcome {
     type Message = Msg;
     type Properties = WelcomeProps;
@@ -53,6 +67,7 @@ impl Component for Welcome {
             link,
             props,
             records: None,
+            errors: None,
         }
     }
 
@@ -62,11 +77,17 @@ impl Component for Welcome {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::FileLoaded(bytes) => {
+            Msg::RecordFileLoaded(bytes) => {
                 spawn_local(async_parse_records(bytes, self.props.recordspec.clone(), self.link.clone()));
             },
             Msg::RecordsParsed(records) => {
                 self.records = Some(records);
+            },
+            Msg::ErrorFileLoaded(bytes) => {
+                spawn_local(async_process_errors(bytes, self.props.errorspec.clone(), self.link.clone()));
+            },
+            Msg::UpdateErrors(errors) => {
+                self.errors = Some(errors);
             },
         }
 
@@ -81,8 +102,18 @@ impl Component for Welcome {
                 { if self.records.is_none() {
                     html! {
                         <FileDropComponent
-                                onfileloaded={self.link.callback(|content| Msg::FileLoaded(content))}
+                                onfileloaded={self.link.callback(|content| Msg::RecordFileLoaded(content))}
                                 text="Drop eIndkomst filen her" />
+                    }
+                } else {
+                    html! {}
+                } }
+                
+                { if self.errors.is_none() {
+                    html! {
+                        <FileDropComponent
+                                onfileloaded={self.link.callback(|content| Msg::ErrorFileLoaded(content))}
+                                text="Drop fejl filen her" />
                     }
                 } else {
                     html! {}
@@ -92,7 +123,8 @@ impl Component for Welcome {
                     html! {
                     <div>
                         <RecordComponent recordspec={self.props.recordspec.clone()}
-                                         records={records.clone()} />
+                                         records={records.clone()}
+                                         errors={self.errors.clone()} />
                     </div>
                     }
                 } else {

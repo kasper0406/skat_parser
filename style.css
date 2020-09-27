@@ -34,6 +34,14 @@ div.dropzone :drop {
   margin-top: 5pt;
 }
 
+.record .error {
+  border: 2px solid red;
+}
+
+.record .warning {
+  border: 2px solid yellow;
+}
+
 .record > .title {
   color: #6b5b95;
   font-weight: bold;
@@ -53,6 +61,18 @@ div.dropzone :drop {
 .record .record .record .record > .title {
   color: #ff7b25;
   font-size: 10pt;
+}
+
+.record .error > .msg {
+  padding: 5pt;
+  margin: 5pt;
+  background-color: lavenderblush;
+}
+
+.record .warning > .msg {
+  padding: 5pt;
+  margin: 5pt;
+  background-color: cornsilk;
 }
 
 .record > .fields {

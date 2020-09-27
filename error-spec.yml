@@ -1,0 +1,120 @@
+key_field:
+  field_number: 9999
+  start: 1
+  length: 4
+  name: "[KEYFIELD]"
+  formatter: Raw
+hierarchy: []
+records:
+  - name: Startrecord
+    key: 0001
+    fields:
+      - field_number: 1
+        start: 1
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Fejl
+    key: 0002
+    fields:
+      - field_number: 1
+        start: 1
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+      - field_number: 2
+        start: 5
+        length: 7
+        name: "Linje nr."
+        formatter: Integer
+      - field_number: 3
+        start: 12
+        length: 2
+        name: "Felt nr."
+        formatter: Integer
+      - field_number: 4
+        start: 14
+        length: 16
+        name: "Indberetningsid"
+        formatter: Raw
+      - field_number: 5
+        start: 30
+        length: 8
+        name: "SE nr."
+        formatter: Raw
+      - field_number: 6
+        start: 38
+        length: 6
+        name: "Fejl nr."
+        formatter: Raw
+      - field_number: 7
+        start: 44
+        length: 300
+        name: "Fejltekst"
+        formatter: Raw
+      - field_number: 8
+        start: 344
+        length: 10
+        name: "Cpr nr."
+        formatter: CprNumber
+      - field_number: 9
+        start: 354
+        length: 8
+        name: "SE person nr."
+        formatter: Raw
+  - name: Advis
+    key: 0003
+    fields:
+      - field_number: 1
+        start: 1
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+      - field_number: 2
+        start: 5
+        length: 7
+        name: "Linje nr."
+        formatter: Integer
+      - field_number: 3
+        start: 12
+        length: 2
+        name: "Felt nr."
+        formatter: Integer
+      - field_number: 4
+        start: 14
+        length: 16
+        name: "Indberetningsid"
+        formatter: Raw
+      - field_number: 5
+        start: 30
+        length: 8
+        name: "SE nr."
+        formatter: Raw
+      - field_number: 6
+        start: 38
+        length: 6
+        name: "Advis nr."
+        formatter: Raw
+      - field_number: 7
+        start: 44
+        length: 300
+        name: "Advistekst"
+        formatter: Raw
+      - field_number: 8
+        start: 344
+        length: 10
+        name: "Cpr nr."
+        formatter: CprNumber
+      - field_number: 9
+        start: 354
+        length: 8
+        name: "SE person nr."
+        formatter: Raw
+  - name: Slutrecord
+    key: 9999
+    fields:
+      - field_number: 1
+        start: 1
+        length: 4
+        name: "Record nr."
+        formatter: Raw
