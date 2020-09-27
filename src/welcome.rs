@@ -16,8 +16,7 @@ use std::rc::Rc;
 
 use crate::record_parser::*;
 use crate::record_component::*;
-
-use crate::routes::EindkomstRoutes;
+use crate::file_drop_component::*;
 
 #[derive(Clone, Properties)]
 pub struct WelcomeProps {
@@ -29,30 +28,11 @@ pub struct Welcome {
     props: WelcomeProps,
     
     records: Option<Rc<Vec<RecordHierarchy>>>,
-    // Error with file load to be displayed to the user
-    error: Option<String>,
 }
 
 pub enum Msg {
-    DragOver(DragEvent),
-    FileDropped(DragEvent),
     FileLoaded(Vec<u8>),
-
     RecordsParsed(Rc<Vec<RecordHierarchy>>),
-}
-
-async fn load_bytes_from_stream(link: ComponentLink<Welcome>, js_stream: ws::ReadableStream) {
-    let mut stream = wasm_streams::ReadableStream::from_raw(js_stream.dyn_into().unwrap()).into_stream();
-
-    let mut buffer = vec![];
-    stream.for_each(|item| {
-        let array = js_sys::Uint8Array::new(&item.unwrap());
-        buffer.append(&mut array.to_vec());
-        
-        future::ready(())
-    }).await;
-
-    link.send_message(Msg::FileLoaded(buffer));
 }
 
 async fn async_parse_records(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: ComponentLink<Welcome>) {
@@ -72,7 +52,6 @@ impl Component for Welcome {
         Welcome {
             link,
             props,
-            error: None,
             records: None,
         }
     }
@@ -83,28 +62,6 @@ impl Component for Welcome {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::DragOver(event) => {
-                event.data_transfer().unwrap().set_drop_effect("copy");
-                event.prevent_default();
-            },
-            Msg::FileDropped(event) => {
-                console::log_1(&"File dropped".into());
-                if let Some(files) = event.data_transfer().unwrap().files() {
-                    console::log_1(&format!("{} files dropped", files.length()).into());
-                    if files.length() != 1 {
-                        self.error = Some("Exactly one file should be processed!".into());
-                    }
-
-                    let file = files.get(0).unwrap();
-                    console::log_1(&format!("Received file {}", file.name()).into());
-
-                    let js_stream = file.stream();
-                    
-                    spawn_local(load_bytes_from_stream(self.link.clone(), js_stream));
-                }
-
-                event.prevent_default();
-            },
             Msg::FileLoaded(bytes) => {
                 spawn_local(async_parse_records(bytes, self.props.recordspec.clone(), self.link.clone()));
             },
@@ -120,18 +77,16 @@ impl Component for Welcome {
         html! {
             <>
                 <h1>{ "eIndkomst viser"}</h1>
-                {
-                    if let Some(error) = &self.error {
-                        html! { <p> { error } </p> }
-                    } else {
-                        html! { }
+                
+                { if self.records.is_none() {
+                    html! {
+                        <FileDropComponent
+                                onfileloaded={self.link.callback(|content| Msg::FileLoaded(content))}
+                                text="Drop eIndkomst filen her" />
                     }
-                }
-                <div ondragover=self.link.callback(|event| Msg::DragOver(event))
-                     ondrop=self.link.callback(|event| Msg::FileDropped(event))
-                     class="dropzone">
-                   { "Drop eIndkomst filen her" }
-                </div>
+                } else {
+                    html! {}
+                } }
 
                 { if let Some(records) = &self.records {
                     html! {

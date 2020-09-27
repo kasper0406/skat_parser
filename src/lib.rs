@@ -14,6 +14,7 @@ use yew::prelude::*;
 use yew_router::prelude::*;
 
 mod routes;
+mod file_drop_component;
 mod welcome;
 mod record_parser;
 mod record_component;
