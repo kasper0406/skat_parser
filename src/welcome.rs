@@ -16,6 +16,9 @@ use std::rc::Rc;
 
 use std::collections::HashMap;
 
+use encoding::{Encoding, DecoderTrap};
+use encoding::all::ISO_8859_1;
+
 use crate::record_parser::*;
 use crate::record_component::*;
 use crate::file_drop_component::*;
@@ -43,7 +46,7 @@ pub enum Msg {
 }
 
 async fn async_parse_records(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: ComponentLink<Welcome>) {
-    let content = std::str::from_utf8(&bytes).unwrap();
+    let content = ISO_8859_1.decode(&bytes, DecoderTrap::Strict).unwrap();
 
     let records = parse_records(&content, spec.clone());
     let records_with_hierarchy = build_hierarchy(&records, &spec);
@@ -52,7 +55,7 @@ async fn async_parse_records(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: Compone
 }
 
 async fn async_process_errors(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: ComponentLink<Welcome>) {
-    let content = std::str::from_utf8(&bytes).unwrap();
+    let content = ISO_8859_1.decode(&bytes, DecoderTrap::Strict).unwrap();
     let records = parse_records(&content, spec.clone());
 
     link.send_message(Msg::UpdateErrors(Rc::new(extract_errors(&records))))

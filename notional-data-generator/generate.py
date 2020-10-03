@@ -95,6 +95,151 @@ def record2111():
 
     return ''.join(f)
 
+def money_amount():
+    return str(fake.random_number(digits=10)) + str(fake.random_number(digits=6))
+
+def record3101():
+    f = []
+
+    f.append(start_record())
+    f.append('3101')
+
+    f.append(fake.random_element(elements=('F', 'B'))) # Forud / Bagud
+    f.append(fake.numerify(text='################')) # Indberegning Id
+    f.append(fake.numerify(text='################')) # Reference Id
+    f.append(fake.date(pattern='%Y%m%d')) # Indberet start
+    f.append(fake.date(pattern='%Y%m%d')) # Indberet slut
+    f.append(fake.random_element(elements=('N', ' '))) # Nulangivelse
+    f.append(fake.random_element(elements=('0000', '0059', '0400'))) # Felt-nr
+    f.append(money_amount())
+    f.append(fake.random_element(elements=('+', '-')))
+
+    return ''.join(f)
+
+def record4101():
+    f = []
+
+    f.append(start_record())
+    f.append('4101')
+
+    f.append(fake.numerify(text='################')) # Indberegning Id
+    f.append(fake.numerify(text='################')) # Reference Id
+    f.append(' ') # Filler
+    f.append(fake.random_element(elements=('J', 'N'))) # Tilbagefoer SE
+    f.append(fake.numerify(text='##########')) # CPR
+
+    return ''.join(f)
+
+def record5000():
+    f = []
+
+    f.append(start_record())
+    f.append('5000')
+
+    f.append(fake.random_element(elements=(' ', 'R'))) # Rettelse
+    f.append(fake.numerify(text='################')) # Indberegning Id
+    f.append(fake.numerify(text='################')) # Reference Id
+    f.append(fake.date(pattern='%Y%m%d')) # Loen start dato
+    f.append(fake.date(pattern='%Y%m%d')) # Loen slut dato
+    f.append(fake.date(pattern='%Y%m%d')) # Dispositions dato
+    f.append(' ') # Filler
+    f.append(fake.random_element(elements=('F', 'B'))) # Forud / Bagud
+    f.append(fake.random_element(elements=('   ', '020', '031', '032'))) # Groenlands kommune
+    f.append(fake.random_element(elements=('00', '01', '03', '04', '05', '06', '07', '08', '09', '10', '11', '20', '24', '26'))) # Indkomsttype
+
+    return ''.join(f)
+
+def record6000():
+    f = []
+
+    f.append(start_record())
+    f.append('6000')
+
+    f.append('        ') # Filler
+    f.append(fake.numerify(text='##########')) # CPR
+    f.append(fake.numerify(text='########')) # SE / CVR
+    f.append(fake.numerify(text='###############')) # Medarbejdsnr
+    f.append(''.ljust(1 + 3 + 25)) # Filler
+    f.append(fake.random_element(elements=('0002', '0004', '0005', '0006'))) # Indtaegtsart
+    f.append(''.ljust(10)) # Produktions enhedsnr
+
+    return ''.join(f)
+
+def record6001():
+    f = []
+
+    f.append(start_record())
+    f.append('6001')
+
+    f.append(fake.random_element(elements=('0013', '0014', '0015', '0019'))) # Felt nr.
+    f.append(money_amount())
+    f.append(fake.random_element(elements=('+', '-')))
+
+    return ''.join(f)
+
+def record6002():
+    f = []
+
+    f.append(start_record())
+    f.append('6002')
+
+    f.append(fake.random_element(elements=('0024', '0043', '0099', '0143', '0209'))) # Felt nr.
+    f.append(fake.numerify(text='##########')) # Kodefelt
+
+    return ''.join(f)
+
+def record6003():
+    f = []
+
+    f.append(start_record())
+    f.append('6003')
+
+    f.append(fake.random_element(elements=('0013', '0014', '0015', '0019'))) # Felt nr.
+    f.append('X') # Afkrydningsfelt
+
+    return ''.join(f)
+
+def record6004():
+    f = []
+
+    f.append(start_record())
+    f.append('6004')
+
+    f.append(fake.random_element(elements=('0013', '0014', '0015', '0019'))) # Felt nr.
+    f.append(fake.catch_phrase().ljust(58)) # Fritekst
+
+    return ''.join(f)
+
+def count():
+    return str(fake.random_number(digits=6)) + str(fake.random_number(digits=2))
+
+def record6005():
+    f = []
+
+    f.append(start_record())
+    f.append('6005')
+
+    f.append(fake.random_element(elements=('0083', '0200', '0203', '0211'))) # Felt nr.
+    f.append(count()) # Antal
+    f.append(fake.random_element(elements=('+', '-')))
+
+    return ''.join(f)
+
+def record8001():
+    f = []
+
+    f.append(start_record())
+    f.append('8001')
+
+    f.append(fake.date(pattern='%Y%m%d')) # Birthday
+    f.append(fake.random_element(elements=('1', '2', '3'))) # Gender
+    f.append(fake.country_code()) # Country
+    f.append(fake.name().ljust(40)) # Name
+    f.append(fake.street_address().ljust(40)) # Address
+    f.append(fake.postcode().ljust(9)) # Post code
+    f.append(fake.city().ljust(35)) # City
+
+    return ''.join(f)
 
 def record9999():
     val = start_record()
@@ -142,10 +287,32 @@ if __name__ == "__main__":
         file.write(record1000() + os.linesep)
         file.write(record2001() + os.linesep)
 
-        for i in range(fake.random_int(0, 10)):
+        for i in range(fake.random_int(1, 10)):
             file.write(record2101() + os.linesep)
+            file.write(record8001() + os.linesep)
             for i in range(fake.random_int(0, 1)):
                 file.write(record2111() + os.linesep)
+
+        file.write(record3101() + os.linesep)
+        file.write(record4101() + os.linesep)
+        
+        for i in range(fake.random_int(1, 5)):
+            file.write(record5000() + os.linesep)
+
+            for j in range(fake.random_int(10, 100)):
+                file.write(record6000() + os.linesep)
+                for k in range(fake.random_int(0, 1)):
+                    file.write(record8001() + os.linesep)
+                for k in range(fake.random_int(1, 3)):
+                    file.write(record6001() + os.linesep)
+                for k in range(fake.random_int(1, 3)):
+                    file.write(record6002() + os.linesep)
+                for k in range(fake.random_int(1, 3)):
+                    file.write(record6003() + os.linesep)
+                for k in range(fake.random_int(1, 3)):
+                    file.write(record6004() + os.linesep)
+                for k in range(fake.random_int(1, 3)):
+                    file.write(record6005() + os.linesep)
 
         file.write(record9999() + os.linesep)
     
