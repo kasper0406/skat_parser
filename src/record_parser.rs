@@ -7,6 +7,24 @@ use yew::prelude::*;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+fn empty_string(len: usize) -> String {
+    let mut s = String::with_capacity(len);
+    for i in 0 .. len {
+        s.push(' ');
+    }
+    s
+}
+
+fn safe_slice(string: &str, start: usize, end: usize) -> String {
+    if end <= string.len() {
+        string[start .. end].to_string()
+    } else if start >= string.len() {
+        empty_string(end - start)
+    } else {
+        string[start .. string.len()].to_owned() + &empty_string(end - string.len())
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 pub enum FieldFormatter {
     Raw,
@@ -84,7 +102,7 @@ impl RecordField {
 
 impl RecordField {
     pub fn parse(&self, line: &str) -> ParsedField {
-        let raw_value = line[(self.start - 1)..(self.start + self.length - 1)].to_string();
+        let raw_value = safe_slice(line, self.start - 1, self.start + self.length - 1).to_string();
         ParsedField::of(raw_value, self)
     }
 }
@@ -206,12 +224,12 @@ pub fn parse_records(content: &str, spec: Rc<RecordSpec>) -> Vec<ParsedRecord> {
                 // console::log_1(&format!("Idx: {}, Start: {}, field: {}, record: {}", idx, field.start, field.field_number, record_type.key).into());
                 assert![ field.start >= idx, "Start must be smaller than index" ];
                 if field.start != idx {
-                    fields.push(ParsedField::unknown(&line[(idx - 1)..field.start]));
+                    fields.push(ParsedField::unknown(&safe_slice(line, idx - 1, field.start)));
                 }
                 fields.push(field.parse(line));
                 idx = field.start + field.length;
             }
-            if line.len() != idx {
+            if line.len() > idx {
                 fields.push(ParsedField::unknown(&line[(idx - 1)..]));
             }
 
@@ -243,6 +261,28 @@ impl RecordHierarchy {
 
     pub fn children(&self) -> Rc<Vec<RecordHierarchy>> {
         self.children.clone()
+    }
+
+    pub fn contains_error(&self, maybe_errors: &Option<Rc<HashMap<usize, Error>>>) -> bool {
+        match maybe_errors {
+            Some(errors) => {
+                if let Some(raw_linenr) = self.record.field(1) {
+                    let linenr = raw_linenr.parse::<usize>().unwrap();
+
+                    let mut child_contains_errors = false;
+
+                    let children: &Vec<RecordHierarchy> = &self.children;
+                    for child in children {
+                        child_contains_errors |= child.contains_error(&maybe_errors);
+                    }
+
+                    errors.contains_key(&linenr) || child_contains_errors
+                } else {
+                    false
+                }
+            },
+            None => false
+        }
     }
 }
 

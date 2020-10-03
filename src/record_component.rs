@@ -85,6 +85,10 @@ impl Component for RecordComponent {
         };
 
         let render_record = |record: &RecordHierarchy| {
+            if !record.contains_error(&self.props.errors) {
+                return html! {};
+            }
+
             // Find a potential error for the record
             // TODO(knielsen): Currently the linenumber record field number hardcoded
             let maybe_raw_linenr = record.record().field(1);
@@ -121,8 +125,8 @@ impl Component for RecordComponent {
                     </div>
                     
                     <RecordComponent recordspec={self.props.recordspec.clone()}
-                                                records={record.children()}
-                                                errors={self.props.errors.clone()} />
+                                     records={record.children()}
+                                     errors={self.props.errors.clone()} />
                 </div>
             }
         };

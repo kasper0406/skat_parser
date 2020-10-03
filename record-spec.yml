@@ -11,6 +11,19 @@ hierarchy:
       - key: 2101
         children:
           - key: 2111
+          - key: 4101
+          - key: 5000
+          - key: 6000
+            children:
+              - key: 6001
+              - key: 6002
+              - key: 6003
+              - key: 6004
+              - key: 6005
+          - key: 6102
+          - key: 6202
+          - key: 6111
+          - key: 8001
   - key: 9999
 records:
   - name: Indberetter
@@ -166,6 +179,175 @@ records:
         length: 8
         name: "Ikraftrædelsestidspunkt"
         formatter: Date
+  - name: Periodeoplysninger på SE. nr.
+    key: 3103
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Tilbageførsel på se-nr. og cpr-nr. niveau
+    key: 4101
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Start pr. personalegruppe mv.
+    key: 5000
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Start pr. cpr-nr.
+    key: 6000
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Periodeoplysninger, beløb, pr. cpr-nr.
+    key: 6001
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Periodeoplysninger, koder pr. cpr-nr.
+    key: 6002
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Periodeoplysninger, afkrydsningsfelter pr. cpr-nr.
+    key: 6003
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Periodeoplysninger, tekstoplysninger pr. cpr-nr.
+    key: 6004
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Periodeoplysninger, antal pr. cpr-nr.
+    key: 6005
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Ferieoplysninger - Fratrædende funktionær - nettoferiepnge
+    key: 6102
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Ferieoplysninger - Fratrædende funktionær - bruttoferiepenge
+    key: 6202
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Lønstatistik-oplysninger pr. cpr-nr.
+    key: 6111
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
+  - name: Supplerende personoplysninger
+    key: 8001
+    fields:
+      - field_number: 1
+        start: 1
+        length: 7
+        name: "Line nr."
+        formatter: Integer
+      - field_number: 2
+        start: 8
+        length: 4
+        name: "Record nr."
+        formatter: Raw
   - name: Slutrecord
     key: 9999
     fields:
