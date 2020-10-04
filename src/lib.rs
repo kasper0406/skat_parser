@@ -13,13 +13,13 @@ use web_sys::console;
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-mod routes;
 mod file_drop_component;
 mod welcome;
 mod record_parser;
 mod record_component;
-
-use routes::EindkomstRoutes;
+mod record_list_component;
+mod field_component;
+mod field_list_component;
 
 use record_parser::RecordSpec;
 

@@ -24,8 +24,10 @@ hierarchy:
               - key: 6003
               - key: 6004
               - key: 6005
-              - key: 8001
+              - key: 6102
+              - key: 6202
               - key: 6111
+              - key: 8001
   - key: 9999
 records:
   - name: Indberetter

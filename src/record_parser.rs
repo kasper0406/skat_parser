@@ -244,14 +244,14 @@ pub fn parse_records(content: &str, spec: Rc<RecordSpec>) -> Vec<ParsedRecord> {
 
 pub struct RecordHierarchy {
     record: ParsedRecord,
-    children: Rc<Vec<RecordHierarchy>>,
+    children: Vec<Rc<RecordHierarchy>>,
 }
 
 impl RecordHierarchy {
     pub fn of(record: ParsedRecord) -> RecordHierarchy {
         RecordHierarchy {
             record,
-            children: Rc::new(vec![]),
+            children: vec![],
         }
     }
 
@@ -259,7 +259,7 @@ impl RecordHierarchy {
         &self.record
     }
 
-    pub fn children(&self) -> Rc<Vec<RecordHierarchy>> {
+    pub fn children(&self) -> Vec<Rc<RecordHierarchy>> {
         self.children.clone()
     }
 
@@ -271,8 +271,7 @@ impl RecordHierarchy {
 
                     let mut child_contains_errors = false;
 
-                    let children: &Vec<RecordHierarchy> = &self.children;
-                    for child in children {
+                    for child in &self.children {
                         child_contains_errors |= child.contains_error(&maybe_errors);
                     }
 
@@ -292,13 +291,13 @@ pub struct HierarchySpec {
     children: Option<Vec<HierarchySpec>>,
 }
 
-pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Vec<RecordHierarchy> {
+pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Vec<Rc<RecordHierarchy>> {
     let mut result = vec![];
 
     let empty_list = vec![];
 
     // TODO(knielsen): Consider unifying these two stacks
-    let mut hierarchy_stack: Vec<RecordHierarchy> = vec![ ];
+    let mut hierarchy_stack: Vec<Rc<RecordHierarchy>> = vec![ ];
     let mut spec_stack: Vec<&Vec<HierarchySpec>> = vec![ &record_spec.hierarchy ];
 
     for record in records {
@@ -309,14 +308,14 @@ pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Ve
                     .find(|spec| spec.key == record.key())
             {
                 spec_stack.push(matching_spec.children.as_ref().unwrap_or(&empty_list));
-                hierarchy_stack.push(RecordHierarchy::of(record.clone()));
+                hierarchy_stack.push(Rc::new(RecordHierarchy::of(record.clone())));
                 break;
             } else {
                 if spec_stack.len() > 1 {
                     spec_stack.pop();
                     let element = hierarchy_stack.pop().unwrap();
                     if let Some(current_node) = hierarchy_stack.last_mut() {
-                        Rc::get_mut(&mut current_node.children).unwrap().push(element);
+                        Rc::get_mut(current_node).unwrap().children.push(element);
                     } else {
                         result.push(element);
                     }
@@ -327,14 +326,14 @@ pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Ve
         }
 
         if hierarchy_stack.is_empty() {
-            result.push(RecordHierarchy::of(record.clone()));
+            result.push(Rc::new(RecordHierarchy::of(record.clone())));
         }
     }
 
     // Make sure to transfer ownership to the resulting structure in case things are still being built
     while let Some(element) = hierarchy_stack.pop() {
         if let Some(current_node) = hierarchy_stack.last_mut() {
-            Rc::get_mut(&mut current_node.children).unwrap().push(element);
+            Rc::get_mut(current_node).unwrap().children.push(element);
         } else {
             result.push(element);
         }
@@ -343,13 +342,13 @@ pub fn build_hierarchy(records: &[ParsedRecord], record_spec: &RecordSpec) -> Ve
     result
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ErrorType {
     Warning,
     Error,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Error {
     pub severity: ErrorType,
     pub line: usize,

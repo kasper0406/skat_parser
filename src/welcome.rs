@@ -20,7 +20,7 @@ use encoding::{Encoding, DecoderTrap};
 use encoding::all::ISO_8859_1;
 
 use crate::record_parser::*;
-use crate::record_component::*;
+use crate::record_list_component::*;
 use crate::file_drop_component::*;
 
 #[derive(Clone, Properties)]
@@ -33,13 +33,13 @@ pub struct Welcome {
     link: ComponentLink<Self>,
     props: WelcomeProps,
     
-    records: Option<Rc<Vec<RecordHierarchy>>>,
+    records: Option<Vec<Rc<RecordHierarchy>>>,
     errors: Option<Rc<HashMap<usize, Error>>>,
 }
 
 pub enum Msg {
     RecordFileLoaded(Vec<u8>),
-    RecordsParsed(Rc<Vec<RecordHierarchy>>),
+    RecordsParsed(Vec<Rc<RecordHierarchy>>),
 
     ErrorFileLoaded(Vec<u8>),
     UpdateErrors(Rc<HashMap<usize, Error>>),
@@ -51,7 +51,7 @@ async fn async_parse_records(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: Compone
     let records = parse_records(&content, spec.clone());
     let records_with_hierarchy = build_hierarchy(&records, &spec);
 
-    link.send_message(Msg::RecordsParsed(Rc::new(records_with_hierarchy)))
+    link.send_message(Msg::RecordsParsed(records_with_hierarchy))
 }
 
 async fn async_process_errors(bytes: Vec<u8>, spec: Rc<RecordSpec>, link: ComponentLink<Welcome>) {
@@ -125,9 +125,9 @@ impl Component for Welcome {
                 { if let Some(records) = &self.records {
                     html! {
                     <div>
-                        <RecordComponent recordspec={self.props.recordspec.clone()}
-                                         records={records.clone()}
-                                         errors={self.errors.clone()} />
+                        <RecordListComponent recordspec={self.props.recordspec.clone()}
+                                             records={records.clone()}
+                                             errors={self.errors.clone()} />
                     </div>
                     }
                 } else {

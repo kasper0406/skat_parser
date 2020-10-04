@@ -210,8 +210,8 @@ def record6004():
 
     return ''.join(f)
 
-def count():
-    return str(fake.random_number(digits=6)) + str(fake.random_number(digits=2))
+def count(num_count, decimal_count):
+    return str(fake.random_number(digits=num_count)) + str(fake.random_number(digits=decimal_count))
 
 def record6005():
     f = []
@@ -220,7 +220,51 @@ def record6005():
     f.append('6005')
 
     f.append(fake.random_element(elements=('0083', '0200', '0203', '0211'))) # Felt nr.
-    f.append(count()) # Antal
+    f.append(count(6, 2)) # Antal
+    f.append(fake.random_element(elements=('+', '-')))
+
+    return ''.join(f)
+
+def record6102():
+    f = []
+
+    f.append(start_record())
+    f.append('6102')
+
+    f.append(money_amount()) # Nettoferiepenge
+    f.append(fake.random_element(elements=('+', '-')))
+    f.append(count(2, 2)) # Feriedage
+    f.append(fake.random_element(elements=('+', '-')))
+    f.append(fake.date(pattern='%Y')) # Ferieaar
+    f.append(fake.date(pattern='%Y%m%d')) # Fratraeldelsesdato
+
+    return ''.join(f)
+
+def record6202():
+    f = []
+
+    f.append(start_record())
+    f.append('6202')
+
+    f.append(money_amount()) # Nettoferiepenge
+    f.append(fake.random_element(elements=('+', '-')))
+    f.append(count(2, 2)) # Feriedage
+    f.append(fake.random_element(elements=('+', '-')))
+    f.append(fake.date(pattern='%Y')) # Ferieaar
+    f.append(fake.date(pattern='%Y%m%d')) # Fratraeldelsesdato
+
+    return ''.join(f)
+
+def record6111():
+    f = []
+
+    f.append(start_record())
+    f.append('6111')
+    
+    f.append(fake.random_element(elements=('0100', '0200', '0350', '0400', '0600', '0610')))
+    f.append(count(10, 0)) # Antal enheder
+    f.append(fake.random_element(elements=('+', '-')))
+    f.append(money_amount()) # Beloeb
     f.append(fake.random_element(elements=('+', '-')))
 
     return ''.join(f)
@@ -296,7 +340,7 @@ if __name__ == "__main__":
         file.write(record3101() + os.linesep)
         file.write(record4101() + os.linesep)
         
-        for i in range(fake.random_int(1, 5)):
+        for i in range(fake.random_int(3, 6)):
             file.write(record5000() + os.linesep)
 
             for j in range(fake.random_int(10, 100)):
@@ -305,14 +349,20 @@ if __name__ == "__main__":
                     file.write(record8001() + os.linesep)
                 for k in range(fake.random_int(1, 3)):
                     file.write(record6001() + os.linesep)
-                for k in range(fake.random_int(1, 3)):
+                for k in range(fake.random_int(0, 3)):
                     file.write(record6002() + os.linesep)
-                for k in range(fake.random_int(1, 3)):
+                for k in range(fake.random_int(0, 3)):
                     file.write(record6003() + os.linesep)
-                for k in range(fake.random_int(1, 3)):
+                for k in range(fake.random_int(0, 3)):
                     file.write(record6004() + os.linesep)
-                for k in range(fake.random_int(1, 3)):
+                for k in range(fake.random_int(0, 3)):
                     file.write(record6005() + os.linesep)
+                for k in range(fake.random_int(0, 3)):
+                    file.write(record6102() + os.linesep)
+                for k in range(fake.random_int(0, 3)):
+                    file.write(record6202() + os.linesep)
+                for k in range(fake.random_int(0, 3)):
+                    file.write(record6111() + os.linesep)
 
         file.write(record9999() + os.linesep)
     
