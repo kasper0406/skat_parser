@@ -340,10 +340,10 @@ if __name__ == "__main__":
         file.write(record3101() + os.linesep)
         file.write(record4101() + os.linesep)
         
-        for i in range(fake.random_int(3, 6)):
+        for i in range(fake.random_int(10, 15)):
             file.write(record5000() + os.linesep)
 
-            for j in range(fake.random_int(10, 100)):
+            for j in range(fake.random_int(10, 500)):
                 file.write(record6000() + os.linesep)
                 for k in range(fake.random_int(0, 1)):
                     file.write(record8001() + os.linesep)
