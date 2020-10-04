@@ -259,6 +259,29 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 16
+        name: "Indberetnings ID"
+        formatter: Raw
+      - field_number: 4
+        start: 28
+        length: 16
+        name: "Reference ID"
+        formatter: Raw
+      - field_number: 6
+        start: 45
+        length: 1
+        name: "Tilbagefør SE"
+        formatter:
+          Enum:
+            J: Ja
+            N: Nej
+      - field_number: 7
+        start: 46
+        length: 10
+        name: "Person CPR nummer"
+        formatter: CprNumber
   - name: Start pr. personalegruppe mv.
     key: 5000
     fields:
@@ -272,6 +295,67 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 1
+        name: "Rettelse tidl. periode"
+        formatter:
+          Enum:
+            ' ': Nej
+            R: Rettelse
+      - field_number: 4
+        start: 13
+        length: 16
+        name: "Indberetnings ID"
+        formatter: Raw
+      - field_number: 5
+        start: 29
+        length: 16
+        name: "Reference ID"
+        formatter: Raw
+      - field_number: 6
+        start: 45
+        length: 8
+        name: "Lønperiode start"
+        formatter: Date
+      - field_number: 7
+        start: 53
+        length: 8
+        name: "Lønperiode slut"
+        formatter: Date
+      - field_number: 8
+        start: 61
+        length: 8
+        name: "Dispositionsdato"
+        formatter: Date
+      - field_number: 10
+        start: 70
+        length: 1
+        name: "Retning"
+        formatter:
+          Enum:
+            F: Forud
+            B: Bagud
+      - field_number: 12
+        start: 74
+        length: 2
+        name: "Indkomsttype"
+        formatter:
+          Enum:
+            00: A-indkomst-modtager/lønansat
+            01: SU
+            03: Grønlands skat
+            04: Anden personlig indkomst
+            05: B-indkomst-modtaget
+            06: Kontant-hjælp
+            07: Sygedagpenge mv.
+            08: §48E-F (forsker-ordningen)
+            09: Skattefri indkomst
+            10: Løn udbetalt via LG
+            11: Løn udloddet fra opgjort bo
+            20: Indkomst fra AFU-fonden
+            24: Anden personlig indkomst (friholdt)
+            26: A-indkomst mv. fra aldersopsparing
   - name: Start pr. cpr-nr.
     key: 6000
     fields:
@@ -285,6 +369,112 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 4
+        start: 20
+        length: 10
+        name: "Person CPR nummer"
+        formatter: CprNumber
+      - field_number: 5
+        start: 30
+        length: 8
+        name: "SE/CVR nummer"
+        formatter: Raw
+      - field_number: 6
+        start: 38
+        length: 15
+        name: "Medarbejdernummer"
+        formatter: Raw
+      - field_number: 10
+        start: 82
+        length: 4
+        name: "Indtægtsart"
+        formatter:
+          Enum:
+            0002: Dagpenge, der er B-indkomst.
+            0003: Dagpenge (ved sygdom og ulykke)
+            0004: Éngangsbeløb - opsat pension, jf. § 15 d, stk. 4 i lov om social pension.
+            0005: Arbejdsløshedsdagpenge.
+            0006: Folke-, førtids- og seniorpension.
+            0007: Lønmodtagernes Garantifond.
+            0008: Udbetalinger fra private arbejdsløshedsforsikringer.
+            0009: Arbejdsmarkedets TillægsPension - ATP.
+            0010: Ældrecheck
+            0011: Biblioteksafgift
+            0012: SP løbende udbetalinger.
+            0013: Efterløn - løbende udbetaling
+            0014: Kursusbeløb/kørselsgodtgørelse udbetalt af arbejdsløshedskassen.
+            0015: Strejke- og lockoutgodtgørelse.
+            0016: Anden understøttelse fra a-kasserne.
+            0018: Rentetilskud til statsgaranteret studielån.
+            0020: Udbetalt pension omfattet af Pensionsbeskatningslovens §15B (opsparingsordning for sportsudøvere).
+            0021: Ikke skattepligtig indkomst til Danmark udbetalt af Danida m.fl.
+            0024: Delpension.
+            0025: Tjenestemandspension.
+            0027: DIS-søindkomst, anden Udenrigsfart- DIS (Dansk Internationalt Skibsregister).
+            0028: DAS-søindkomst - Uden for begrænset fart - Udenrigsfart - Indenrigsfart, rutetrafik fra havn til havn på mindst 50 sømil - Stenfiskere/sandsugere DAS (Dansk Almindelig Skibsregister)
+            0030: A-indkomst for kommunale dagplejemødre.
+            0034: Søindkomst, Færøerne/Grønland. Anvendes når sømanden er begrænset skattepligtig efter kildeskattelovens § 2, stk. 2 og har optjent sin løn ved tjeneste om bord på et dansk skib, som sejler uden for begrænset fart. Indkomstarten anvendes når sømanden bor på Færøerne eller Grønland, og rederiet i en måned ikke har modtaget refusion efter § 10 i SØBL.
+            0036: Ydelser efter serviceloven, hvori der kan ske lønindeholdelse.
+            0037: Skattepligtig gruppelivsforsikring, som ikke er betalt via bortseelsesberettiget træk i løn.
+            0038: Anden skattepligtig ydelse - kommunalt udbetalt - se nærmere i indberetningsvejledningen.
+            0039: Efterlevelseshjælp/Pasning af døende § 57
+            0041: Skattepligtig kontant- og engangshjælp (aktivlov § 25), kontantydelse og aktiveringsydelse.
+            0042: Skattepligtig revalideringsydelse (aktivlov §52).
+            0044: Bidragspligtig pension.
+            0045: Vederlag for afløsning af pensionstilsagn.
+            0049: Skattefri uddannelsesydelse (LL § 31 stk.3, nr.3 og 4).
+            0050: Købe- og tegningsretter til aktier samt Aktier/Anparter efter LL § 16 skal indberettes i felt 36. I de tilfælde, hvor retten ikke er værdiansat skal der indberettes et kryds i feltnr. 40.
+            0051: Købe- og tegningsretter LL § 28.
+            0056: Søindkomst, Færøerne/Grønland. Anvendes når sømanden er begrænset skattepligtig efter kildeskattelovens § 2, stk. 2 og har optjent sin løn ved tjeneste om bord på et dansk skib, som sejler uden for begrænset fart. Indkomstarten anvendes når sømanden bor på Færøerne eller Grønland, og rederiet i en måned har modtaget refusion efter § 10 i SØBL.
+            0057: DIS-indkomst, Begrænset fart - DIS - Færge-DIS (Rutetrafik fra havn til havn på under 50 sømil).
+            0060: Personalegoder til direktør.
+            0061: Personalegoder til hovedaktionær samt udloddet fri bil som udbytte.
+            0062: Computer, anskaffet ved reduktion i bruttoløn.
+            0064: Tilbagebetaling af bidrag vedr. Efterløns- og fleksydelsesbidrag (Engangsudbetaling) efter 30. juni 2007 (L154 - Lov nr 347 af 18. april 2007 - Forhøjelse af aldersgrænser og tilbagebetaling af efterløns- og fleksydelsesbidrag)
+            0069: Corona - selvstændig - kompensation - Gyldig fra 1.3.2020
+            0070: Skattepligtige offentlige tilskud.
+            0071: Skattefrie offentlige tilskud.
+            0072: Rettelser indsendt af SU styrelsen
+            0073: Skattefrit soldaterlegat.
+            0074: Anden pension. 
+            0076: Værdi af naturaliepræmier.
+            0077: Pengepræmier.
+            0078: Barselsdagpenge
+            0079: Indkomst ved selvstændigt erhverv. 
+            0080: Indskud til aldersopsparing. Aldersopsparingsudbyderes årlige indberetning af indskud, når beløbet skal til beskatning som B-indkomst. Gældende fra 2013 t.o.m. 2017.
+            0081: Indskud til kapitalpension. Kapitalpensionsudbyderes årlige indberetning af indskud, når beløbet skal til beskatning som B-indkomst. Gældende fra 2013 t.o.m. 2017.
+            0082: Vederlag for privat pasning. Dækker vederlag til privat pasningsordning for børn hvor pasningen foregår i vederlagsmodtagers eget hjem og kommunen yder tilskud til forældrene efter dagtilbudslovens § 80.
+            0083: Kommunalt flekslønstilskud udbetalt til lønmodtager.
+            0084: Kommunalt ressourceforløbsydelse.
+            0086: Fleksydelse - løbende udbetaling.
+            0087: Uddannelseshjælp og aktivitetstillæg - udbetales af kommunen.
+            0088: Udbytte fra medarbejderinvesteringsselskab.
+            0089: Udlodning og avance fra medarbejderinvesteringsselskab.
+            0097: Skattefrie uddelinger/legater fra fonde (B-indkomst).
+            0099: Skattepligtige uddelinger fra skattepligtige fonde til almennyttige formål og andre formål, der giver fonden ret til fradrag for uddelingen. Gældende fra 05.10.2016.
+            0100: Skattepligtige uddelinger fra skattepligtige fonde til ikke-almennyttige formål, der ikke giver fonden ret til fradrag for uddelingen. Kun 80 % af værdien af uddelingen beskattes hos modtager. Gældende fra 05.10.2016.
+            0101: Købe- eller tegningsretter til aktier, skattefrie efter LL § 7 P eller med udskudt beskatning efter LL § 28.
+            0102: Vederlag i forbindelse med offentligt ombud og hverv.
+            0103: Sygedagpenge der er A-indkomst og udbetales af kommuner og arbejdsgivere. Gældende for perioder i 2017 og senere.
+            0104: Godtgørelse for 1. og 2. ledighedsdag (G-dage) fra arbejdsgivere, samt kompensation fra kommunen, for ikke anvist seniorjob.
+            0105: Tabt arbejdsfortjeneste efter § 42 i lov om social service
+            0106: Plejevederlag efter § 120 i lov om social service.
+            0107: Éngangstillæg for opsat pension (udbetales af Udbetaling Danmark), jf. § 15F, stk. 3 i lov om social pension. Tæller ikke med i topskattegrundlag.
+            0108: Skattefri rejsegodtgørelse jf. Ligningslovens § 9A
+            0109: Skattefri befordringsgodtgørelse (kørselsgodtgørelse) jf. Ligningslovens § 9B
+            0110: Invalidepension
+            0111: Rateforsikring ved invaliditet
+            0112: Rateopsparing ved nedsat arbejdsevne
+            0113: Ægtefælle og samleverpension
+            0114: Pension udbetalt til efterladte og børnepension
+            0115: Ekstra personligt tillæg - mediecheck.
+            0127: Udenlandsk DIS-søindkomst jf. SØBL § 11a - endnu ikke gyldig - forventes implementeret i efterråret 2020 med gyldighed pr 1.1.2020
+            0128: Udenlandsk DAS-søindkomst jf. SØBL § 11b - endnu ikke gyldig - forventes implementeret i efteråret 2020 med gyldighed pr 1.1.2020
+            0170: OP-bidrag - tillægsrefusion - Gyldig fra 1.1.2020
+            0171: Corona - lønkompensation - Gyldig fra 1.3.2020
+            0172: Corona - faste udgifter - kompensation - Gyldig fra 1.3.2020
+            0173: Corona - arrangørkompensation - Gyldig fra 1.3.2020
+            0174: Corona - førtidig udbetaling af feriemidler - Gyldig fra 1.9.2020
   - name: Periodeoplysninger, beløb, pr. cpr-nr.
     key: 6001
     fields:
