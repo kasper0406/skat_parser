@@ -196,6 +196,56 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 1
+        name: "Retning"
+        formatter:
+          Enum:
+            F: Forud
+            B: Bagud
+      - field_number: 4
+        start: 13
+        length: 16
+        name: "Indberetnings ID"
+        formatter: Raw
+      - field_number: 5
+        start: 29
+        length: 16
+        name: "Reference ID"
+        formatter: Raw
+      - field_number: 6
+        start: 45
+        length: 8
+        name: "Start dato"
+        formatter: Date
+      - field_number: 7
+        start: 53
+        length: 8
+        name: "Slut dato"
+        formatter: Date
+      - field_number: 8
+        start: 61
+        length: 1
+        name: "Nulangivelse"
+        formatter:
+          Enum:
+            ' ': Nej
+            N: Ja
+      - field_number: 9
+        start: 62
+        length: 4
+        name: "Felt"
+        formatter:
+          Enum:
+            0000: Nulangivelse
+            0059: Foreløbig A-skat af arbejdsgiveradministreret aldersopsparing
+            0400: AM-bidrag af særlige pensionsordninger
+      - field_number: 10
+        start: 66
+        length: 17
+        name: "Beløb"
+        formatter: MoneyAmount
   - name: Tilbageførsel på se-nr. og cpr-nr. niveau
     key: 4101
     fields:

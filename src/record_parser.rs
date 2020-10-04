@@ -33,6 +33,16 @@ pub enum FieldFormatter {
     CprNumber,
     Time,
     Enum(HashMap<String, String>),
+    MoneyAmount,
+}
+
+fn trim_right_zeros(value: &str) -> String {
+    let trimmed = value.trim();
+    let mut len = trimmed.len();
+    while len > 0 && trimmed.chars().nth(len - 1).unwrap() == '0' {
+        len -= 1;
+    }
+    trimmed[0..len].to_string()
 }
 
 impl FieldFormatter {
@@ -63,6 +73,16 @@ impl FieldFormatter {
             FieldFormatter::Enum(entries) => {
                 Ok(html! { entries.get(&raw_value).unwrap_or(&format!("Unknown: {}", raw_value)) })
             }
+            FieldFormatter::MoneyAmount => {
+                let sigs = raw_value[0..10].parse::<i64>().unwrap_or(-1);
+                let decs = trim_right_zeros(&raw_value[10..16]).parse::<i64>().unwrap_or(-1);
+                let sign = match raw_value.chars().nth(16) {
+                    Some('-') => '-',
+                    _ => ' '
+                };
+
+                Ok(html! { format!("{}{}.{},-", sign, sigs, decs) })
+            },
             _ => Ok(html! { raw_value }),
         }
     }
