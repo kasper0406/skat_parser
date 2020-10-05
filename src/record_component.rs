@@ -103,9 +103,19 @@ impl Component for RecordComponent {
                 
                 { if expand_children {
                     html! {
+                        <>
                         <RecordListComponent recordspec={self.props.recordspec.clone()}
                                              records={record.children()}
                                              errors={self.props.errors.clone()} />
+                        
+                        { if expandable {
+                            html! {
+                                <div class="collapse" onclick=self.link.callback(|evnet| Msg::ToggleExpand)>
+                                    { "Click to collapse" }
+                                </div>
+                            }
+                        } else { html! {} } }
+                        </>
                     }
                 } else if expandable {
                     html! {

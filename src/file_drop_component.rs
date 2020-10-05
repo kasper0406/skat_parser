@@ -19,6 +19,7 @@ pub struct FileDropComponent {
     props: FileDropComponentProps,
 
     error: Option<String>,
+    loading: bool,
 }
 
 pub enum Msg {
@@ -49,6 +50,7 @@ impl Component for FileDropComponent {
             link,
             props,
             error: None,
+            loading: false,
         }
     }
 
@@ -63,6 +65,8 @@ impl Component for FileDropComponent {
                 event.prevent_default();
             },
             Msg::FileDropped(event) => {
+                self.loading = true;
+
                 console::log_1(&"File dropped".into());
                 if let Some(files) = event.data_transfer().unwrap().files() {
                     console::log_1(&format!("{} files dropped", files.length()).into());
@@ -99,7 +103,12 @@ impl Component for FileDropComponent {
                 <div ondragover=self.link.callback(|event| Msg::DragOver(event))
                     ondrop=self.link.callback(|event| Msg::FileDropped(event))
                     class="dropzone">
-                    { self.props.text.clone() }
+                    { if self.loading {
+                        "Loading...".to_string()
+                      } else {
+                        self.props.text.clone()
+                      }
+                    }
                 </div>
             </>
         }

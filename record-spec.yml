@@ -488,6 +488,66 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 4
+        name: "Felt nr."
+        formatter:
+          Enum:
+            0013: A-indkomst, hvoraf der skal betales arbejdsmarkedsbidrag
+            0014: A-indkomst, hvoraf der ikke skal betales arbejdsmarkedsbidrag
+            0015: Indeholdt A-skat
+            0016: Indeholdt arbejdsmarkedsbidrag
+            0019: Værdi af fri bil til rådighed
+            0020: Værdi af fri telefon mm.
+            0021: Værdi af fri kost og logi
+            0022: Indskud i arbejdsgiveradministreret pensionsordning i svensk pensionsselskab/-institut eller anden godkendt udenlandsk pensionsordning
+            0023: Am-bidrag (8 pct.) af indskud indberettet under felt 22.
+            0025: Skattefri del af udbetaling fra anden godkendt udenlandsk pensionsordning
+            0026: Værdi af arbejdsgiverbetalt sundhedsforsikring og -behandling
+            0036: B-indkomst, hvoraf der skal betales arbejdsmarkedsbidrag
+            0037: Offentlige tilskud og godtgørelser til virksomhed
+            0038: B-indkomst, hvoraf der ikke skal betales arbejdsmarkedsbidrag
+            0039: Hædersgaver
+            0041: Bruttoindskud i medarbejderinvesteringsselskab
+            0042: AM-bidrag af indskud i medarbejderinvesteringsselskab
+            0046: ATP-bidrag
+            0047: OP-bidrag
+            0048: Skattefri rejse- og befordringsgodtgørelse
+            0050: Værdi af fri helårsbolig
+            0051: Værdi af fri sommerbolig
+            0052: Værdi af fri lystbåd
+            0053: Værdi af fri medie-/radiolicens
+            0055: Værdi af andre personalegoder, der overstiger bundgrænse.
+            0056: Værdi af andre personalegoder, uden bundgrænse.
+            0057: A-indkomst fra aldersopsparing
+            0058: A-skat af aldersopsparing
+            0069: Jubilæumsgratiale og fratrædelsesgodtgørelse
+            0070: Den del af 0069, der er indbetalt til pensionsordning.
+            0071: Den del af 0069, der er tingsgaver
+            0088: Fritaget for udligningsskat
+            0089: Bidrag til obligatorisk udenlandsk social sikring
+            0090: Pensionsindskud til beskatning
+            0091: Gruppelivsforsikring i pensionsindskud
+            0096: Sundhedsforsikring i pensionsindskud
+            0098: Tilbagebetaling af kontanthjælp
+            0113: A-indkomst udbetalt som feriepenge
+            0147: Lønmodtagers pensionsandel
+            0148: Arbejdsgivers pensionsandel
+            0157: Indbetaling på ikke-grønlandsk pensionsordning
+            0158: Skat af indbetaling på ikke-grønlandsk pensionsordning
+            0198: Bruttoferiepenge - timelønnede
+            0200: Bruttoindkomst
+            0201: Bruttoferiepenge
+            0202: Nettoferiepenge - timelønnede
+            0210: Bruttoferiepenge - fortsættende funktionær
+            0248: Opsparing til søgne- og helligdags betaling
+            0249: Opsparing til feriefridage
+      - field_number: 4
+        start: 16
+        length: 17
+        name: "Beløb"
+        formatter: MoneyAmount
   - name: Periodeoplysninger, koder pr. cpr-nr.
     key: 6002
     fields:
@@ -500,6 +560,24 @@ records:
         start: 8
         length: 4
         name: "Record nr."
+        formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 4
+        name: "Felt nr."
+        formatter:
+          Enum:
+            0024: Godkendelsesnummer for anden godkendt udenlandsk pensionsordning
+            0043: Cvr-nr. på medarbejderinvesteringsselskab
+            0099: Pinkode
+            0143: RUT-nr. på udenlandsk arbejdsgiver vedr. AFU
+            0209: Se-nr. på feriepengeudbetaler
+            0218: Cvr-/se-nr på udbetalende FereiGarantiOrdning
+            0500: Barselsudligningordning
+      - field_number: 4
+        start: 16
+        length: 10
+        name: "Kode"
         formatter: Raw
   - name: Periodeoplysninger, afkrydsningsfelter pr. cpr-nr.
     key: 6003
@@ -514,6 +592,21 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 4
+        name: "Felt nr."
+        formatter:
+          Enum:
+            0011: Arbejdsstedet ej lig nogen virksomhedsadresse(r)
+            0040: Naturalieydelser
+            0063: Frikort offentlig befordring
+            0220: Ingen forhold mellem løn og timer
+      - field_number: 4
+        start: 16
+        length: 1
+        name: "Afkrydsning"
+        formatter: Raw
   - name: Periodeoplysninger, tekstoplysninger pr. cpr-nr.
     key: 6004
     fields:
@@ -526,6 +619,25 @@ records:
         start: 8
         length: 4
         name: "Record nr."
+        formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 4
+        name: "Felt nr."
+        formatter:
+          Enum:
+            0040: Yderligere oplysninger til felt 40
+            0045: Sats-type for ATP-bidrag
+            0068: Yderligere tekstoplysninger
+            0114: YR-kontonummer - ikke-kommunale ydelser
+            0115: YR-kontonummer - kommunale ydelser
+            0214: YR-ydelsesperiode
+            0215: YR-periode for tilskud og refusion
+            0216: YR-udløsende cpr-nr.
+      - field_number: 4
+        start: 16
+        length: 58
+        name: "Fritekstfelt"
         formatter: Raw
   - name: Periodeoplysninger, antal pr. cpr-nr.
     key: 6005
@@ -540,6 +652,28 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 4
+        name: "Felt nr."
+        formatter:
+          Enum:
+            0040: Yderligere oplysninger til felt 40
+            0045: Sats-type for ATP-bidrag
+            0068: Yderligere tekstoplysninger
+            0114: YR-kontonummer - ikke-kommunale ydelser
+            0115: YR-kontonummer - kommunale ydelser
+            0214: YR-ydelsesperiode
+            0215: YR-periode for tilskud og refusion
+            0216: YR-udløsende cpr-nr.
+      - field_number: 4
+        start: 16
+        length: 9
+        name: "Antal"
+        formatter:
+          Count:
+            - 6
+            - 2
   - name: Ferieoplysninger - Fratrædende funktionær - nettoferiepnge
     key: 6102
     fields:
@@ -553,6 +687,29 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 17
+        name: "Nettoferiepenge"
+        formatter: MoneyAmount
+      - field_number: 5
+        start: 29
+        length: 5
+        name: "Feriedage"
+        formatter:
+          Count:
+            - 2
+            - 2
+      - field_number: 7
+        start: 34
+        length: 4
+        name: "Ferieår"
+        formatter: Raw
+      - field_number: 8
+        start: 38
+        length: 8
+        name: "Fratrædelsesdato"
+        formatter: Date
   - name: Ferieoplysninger - Fratrædende funktionær - bruttoferiepenge
     key: 6202
     fields:
@@ -566,6 +723,29 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 17
+        name: "Nettoferiepenge"
+        formatter: MoneyAmount
+      - field_number: 5
+        start: 29
+        length: 5
+        name: "Feriedage"
+        formatter:
+          Count:
+            - 2
+            - 2
+      - field_number: 7
+        start: 34
+        length: 4
+        name: "Ferieår"
+        formatter: Raw
+      - field_number: 8
+        start: 38
+        length: 8
+        name: "Fratrædelsesdato"
+        formatter: Date
   - name: Lønstatistik-oplysninger pr. cpr-nr.
     key: 6111
     fields:
@@ -579,6 +759,25 @@ records:
         length: 4
         name: "Record nr."
         formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 4
+        name: "Indholdstype"
+        formatter:
+          Enum: {}
+      - field_number: 4
+        start: 16
+        length: 11
+        name: "Antal enheder"
+        formatter:
+          Count:
+            - 10
+            - 0
+      - field_number: 6
+        start: 27
+        length: 17
+        name: "Nettoferiepenge"
+        formatter: MoneyAmount
   - name: Supplerende personoplysninger
     key: 8001
     fields:
@@ -591,6 +790,45 @@ records:
         start: 8
         length: 4
         name: "Record nr."
+        formatter: Raw
+      - field_number: 3
+        start: 12
+        length: 8
+        name: "Fødselsdagsdato"
+        formatter: Date
+      - field_number: 4
+        start: 20
+        length: 1
+        name: "Køn"
+        formatter:
+          Enum:
+            1: Mand
+            2: Kvinde
+            3: Ukendt
+      - field_number: 5
+        start: 21
+        length: 2
+        name: "Land"
+        formatter: Raw
+      - field_number: 6
+        start: 23
+        length: 40
+        name: "Navn"
+        formatter: Raw
+      - field_number: 7
+        start: 63
+        length: 40
+        name: "Adresse"
+        formatter: Raw
+      - field_number: 8
+        start: 103
+        length: 9
+        name: "Postnr."
+        formatter: Raw
+      - field_number: 9
+        start: 112
+        length: 35
+        name: "By"
         formatter: Raw
   - name: Slutrecord
     key: 9999
