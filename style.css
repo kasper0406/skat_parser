@@ -1,5 +1,6 @@
 :root {
   --font-stack: Helvetica, sans-serif;
+  --border-radius: 10pt;
 }
 
 body {
@@ -32,6 +33,8 @@ div.dropzone :drop {
   margin-bottom: 10pt;
   margin-left: 10pt;
   margin-top: 5pt;
+  border: 1px solid grey;
+  border-radius: var(--border-radius);
 }
 
 .record .error {
@@ -45,22 +48,75 @@ div.dropzone :drop {
 .record > .title {
   color: #6b5b95;
   font-weight: bold;
-  font-size: 14pt;
+  font-size: 12pt;
+  border-radius: var(--border-radius) var(--border-radius) 0pt 0pt;
+  padding: 5pt;
+  border-bottom: 1px solid grey;
+  background-color: #dbdbf5;
+}
+
+.record > .expandable {
+  font-size: 9pt;
+  border-radius: 0pt 0pt var(--border-radius) var(--border-radius);
+  padding: 3pt;
+  border-top: 1px dashed grey;
+  text-align: center;
+  cursor: grab;
+  font-size: 9pt;
+  font-weight: bold;
+  background-color: cornsilk;
+}
+
+.record > .expandable:hover {
+  background-color: pink;
+}
+
+.record > .collapse {
+  font-size: 9pt;
+  border-radius: 0pt 0pt var(--border-radius) var(--border-radius);
+  padding: 3pt;
+  border-top: 1px dashed grey;
+  text-align: center;
+  cursor: grab;
+  font-size: 9pt;
+  font-weight: bold;
+  background-color: lightcoral;
+}
+
+.record > .collapse:hover {
+  background-color: pink;
 }
 
 .record .record > .title {
   color: #feb236;
-  font-size: 12pt;
+  font-size: 11pt;
+  background-color: #fFf2d6;
+}
+
+.record .record .record {
+  border-radius: 5pt;
 }
 
 .record .record .record > .title {
   color: #d64161;
   font-size: 10pt;
+  background-color: #ffe1e1;
+  border-radius: 5pt 5pt 0pt 0pt;
+  padding: 3pt;
+}
+
+.record .record .record .record {
+  border: 0;
+  border-radius: 0;
 }
 
 .record .record .record .record > .title {
+  border: 0;
   color: #ff7b25;
   font-size: 10pt;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
 }
 
 .record .error > .msg {
@@ -79,6 +135,7 @@ div.dropzone :drop {
   display: flex;
   padding-left: 15pt;
   padding-top: 5pt;
+  margin-bottom: 3pt;
 }
 
 .record > .fields > .field {
