@@ -18,16 +18,23 @@ pub struct FieldComponentProps {
 pub struct FieldComponent {
     link: ComponentLink<Self>,
     props: FieldComponentProps,
+
+    show_raw: bool,
+}
+
+pub enum Msg {
+    ToggleRaw,
 }
 
 impl Component for FieldComponent {
-    type Message = ();
+    type Message = Msg;
     type Properties = FieldComponentProps;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
         FieldComponent {
             link,
             props,
+            show_raw: false,
         }
     }
 
@@ -37,6 +44,9 @@ impl Component for FieldComponent {
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
+        match msg {
+            ToggleRaw => self.show_raw = !self.show_raw,
+        }
         true
     }
 
@@ -61,10 +71,15 @@ impl Component for FieldComponent {
                     <p class="name">
                         { spec.map(|spec| spec.name().clone()).unwrap_or("Unknown".to_string()) }
                     </p>
-                    <p class="value">
-                        { spec
-                            .map(|spec| spec.formatter().format(field.raw().clone()).unwrap_or(html! { field.raw() }))
-                            .unwrap_or(html! { field.raw() }) }
+                    <p class="value" ondblclick=self.link.callback(|event| Msg::ToggleRaw)>
+                        { if !self.show_raw {
+                            spec
+                                .map(|spec| spec.formatter().format(field.raw().clone()).unwrap_or(html! { field.raw() }))
+                                .unwrap_or(html! { <p class="raw"> { field.raw() } </p> })
+                          } else {
+                              html! { <p class="raw"> { field.raw() } </p> }
+                          }
+                        }
                     </p>
                 </div>
             }

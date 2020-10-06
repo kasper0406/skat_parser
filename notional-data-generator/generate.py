@@ -96,7 +96,7 @@ def record2111():
     return ''.join(f)
 
 def money_amount():
-    return str(fake.random_number(digits=10)) + str(fake.random_number(digits=6))
+    return count(10, 6)
 
 def record3101():
     f = []
@@ -211,7 +211,7 @@ def record6004():
     return ''.join(f)
 
 def count(num_count, decimal_count):
-    return str(fake.random_number(digits=num_count)) + str(fake.random_number(digits=decimal_count))
+    return str(fake.random_number(digits=num_count)).rjust(num_count, "0") + str(fake.random_number(digits=decimal_count)).ljust(decimal_count, "0")
 
 def record6005():
     f = []
